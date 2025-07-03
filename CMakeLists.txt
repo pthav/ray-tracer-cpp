@@ -4,9 +4,18 @@ project(ray_tracer_cpp)
 set(CMAKE_CXX_STANDARD 23)
 
 add_executable(ray_tracer_cpp main.cpp
-        vector.cpp
-        vector.h
-        color.h)
+        ray/vector.cpp
+        ray/vector.h
+        ray/color.h
+        ray/ray.h
+        hittable/hittable.h
+        hittable/sphere.h
+        hittable/sphere.cpp
+        hittable/hittable_list.h
+        hittable/hittable_list.cpp
+        camera/camera.h
+        camera/camera.cpp
+)
 
 include(FetchContent)
 FetchContent_Declare(
@@ -22,7 +31,7 @@ enable_testing()
 add_executable(
         my_tests
         tests/vector_test.cpp
-        vector.cpp
+        ray/vector.cpp
 )
 target_link_libraries(
         my_tests

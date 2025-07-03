@@ -3,9 +3,10 @@
 #include "vector.h"
 #include <iostream>
 
-using color = vec3;
+using color = Vec3;
 
-inline void write_color(std::ostream& out, const color& pixel_color) {
+inline void write_color(std::ostream &out, const color &pixel_color)
+{
     // Translate from [0,1] to [0,255].
     int rbyte = int(255.999 * pixel_color[0]);
     int gbyte = int(255.999 * pixel_color[1]);
