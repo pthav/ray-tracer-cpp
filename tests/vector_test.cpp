@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "../ray/vector.h"
+#include "../vector/vector.h"
 
 #include <cmath>
 

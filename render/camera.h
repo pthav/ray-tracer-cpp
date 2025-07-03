@@ -1,8 +1,10 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
+#include <random>
+
 #include "../hittable/hittable_list.h"
-#include "../ray/color.h"
+#include "../vector/color.h"
 
 class Camera
 {
@@ -12,13 +14,18 @@ private:
     Vec3 m_pixelU{};
     Vec3 m_pixelV{};
     point3 m_pixel00Loc{};
+    std::mt19937 m_gen;
+    std::uniform_real_distribution<> m_distribution{};
 
     void initialize();
+
+    ray generateRay(const point3 &pixel);
 
     static color rayColor(const ray &r, const HittableList &objects);
 
 public:
     int m_imageWidth{400};
+    int m_samples{50};
     double m_aspectRatio{16.0 / 9.0};
 
     Camera() = default;

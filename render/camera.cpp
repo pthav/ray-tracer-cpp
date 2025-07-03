@@ -10,7 +10,7 @@ void Camera::initialize()
     m_imageHeight = (m_imageHeight < 1) ? 1 : m_imageHeight;
 
     // Camera settings
-    auto focalLength {1.0};
+    auto focalLength{1.0};
     auto viewportHeight{2.0};
     auto viewportWidth{viewportHeight * (static_cast<double>(m_imageWidth) / m_imageHeight)};
     m_cameraCenter = point3{0, 0, 0};
@@ -26,6 +26,26 @@ void Camera::initialize()
     // Upper left
     auto viewportUpperLeft{m_cameraCenter - Vec3{0, 0, focalLength} - 0.5 * viewportU - 0.5 * viewportV};
     m_pixel00Loc = viewportUpperLeft + 0.5 * m_pixelU + 0.5 * m_pixelV;
+
+    // Random
+    std::random_device rd{};
+    m_gen.seed(rd());
+    m_distribution = std::uniform_real_distribution<>(-1.0 / 2.0, 1.0 / 2.0);
+}
+
+// Randomly generate a random ray pointing within a given pixel
+ray Camera::generateRay(const point3 &pixel)
+{
+    double randomU{m_distribution(m_gen)};
+    double randomV{m_distribution(m_gen)};
+    Vec3 du{m_pixelU * randomU};
+    Vec3 dv{m_pixelV * randomV};
+
+    Vec3 origin{m_cameraCenter};
+    Vec3 direction{(pixel + du + dv) - origin};
+    ray randomRay{origin, direction};
+
+    return randomRay;
 }
 
 color Camera::rayColor(const ray &r, const HittableList &objects)
@@ -53,10 +73,13 @@ void Camera::render(const HittableList &objects)
         for (int col = 0; col < m_imageWidth; col++)
         {
             auto pixelCenter{m_pixel00Loc + (col * m_pixelU) + (row * m_pixelV)};
-            auto rayDirection{pixelCenter - m_cameraCenter};
-            ray pixelRay{m_cameraCenter, rayDirection};
-            color pixel{rayColor(pixelRay, objects)};
-            write_color(out, pixel);
+            color accumulated{0, 0, 0};
+            for (int s = 0; s < m_samples; s++)
+            {
+                ray pixelRay{generateRay(pixelCenter)};
+                accumulated += rayColor(pixelRay, objects);
+            }
+            write_color(out, accumulated / m_samples);
         }
     }
 }

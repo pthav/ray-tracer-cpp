@@ -1,4 +1,4 @@
-#include "camera/camera.h"
+#include "render/camera.h"
 #include "hittable/hittable_list.h"
 #include "hittable/sphere.h"
 

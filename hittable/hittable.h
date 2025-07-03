@@ -1,7 +1,7 @@
 #ifndef HITTABLE_H
 #define HITTABLE_H
-#include "../ray/ray.h"
-#include "../ray/vector.h"
+#include "../vector/ray.h"
+#include "../vector/vector.h"
 
 // hitRecord stores information about a ray intersection with an object
 struct hitRecord

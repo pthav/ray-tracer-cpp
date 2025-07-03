@@ -11,7 +11,7 @@ private:
 public:
     ray() = default;
 
-    ray(point3 origin, Vec3 direction) : origin{origin}, direction{direction}
+    ray(const point3 &origin, const Vec3 &direction) : origin{origin}, direction{direction}
     {
     }
 
