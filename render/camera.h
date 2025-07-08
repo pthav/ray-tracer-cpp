@@ -3,6 +3,7 @@
 
 #include <random>
 
+#include "../materials/material.h"
 #include "../hittable/hittable_list.h"
 #include "../vector/color.h"
 
@@ -21,11 +22,11 @@ private:
 
     ray generateRay(const point3 &pixel);
 
-    static color rayColor(const ray &r, const HittableList &objects);
+    static color rayColor(const ray &r, const HittableList &objects, int depth);
 
 public:
     int m_imageWidth{400};
-    int m_samples{50};
+    int m_samples{10};
     double m_aspectRatio{16.0 / 9.0};
 
     Camera() = default;

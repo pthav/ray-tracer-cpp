@@ -5,12 +5,29 @@
 
 using color = Vec3;
 
-inline void write_color(std::ostream &out, const color &pixel_color)
+inline double linearToGamma(double c)
 {
+    if (c > 0){
+        return std::sqrt(c);
+    }
+
+    return 0;
+}
+
+inline void write_color(std::ostream &out, const color &pixelColor)
+{
+    // Gamma correction
+    auto r {linearToGamma(pixelColor[0])};
+    auto g {linearToGamma(pixelColor[1])};
+    auto b {linearToGamma(pixelColor[2])};
+    // auto r {pixelColor[0]};
+    // auto g {pixelColor[1]};
+    // auto b {pixelColor[2]};
+
     // Translate from [0,1] to [0,255].
-    int rbyte = int(255.999 * pixel_color[0]);
-    int gbyte = int(255.999 * pixel_color[1]);
-    int bbyte = int(255.999 * pixel_color[2]);
+    int rbyte = static_cast<int>(255.999 * r);
+    int gbyte = static_cast<int>(255.999 * g);
+    int bbyte = static_cast<int>(255.999 * b);
 
     out << rbyte << ' ' << gbyte << ' ' << bbyte << '\n';
 }

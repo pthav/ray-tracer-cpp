@@ -48,12 +48,23 @@ ray Camera::generateRay(const point3 &pixel)
     return randomRay;
 }
 
-color Camera::rayColor(const ray &r, const HittableList &objects)
+color Camera::rayColor(const ray &r, const HittableList &objects, int depth)
 {
-    hitRecord record{};
-    if (objects.hit(r, 0, std::numeric_limits<double>::infinity(), record))
+    if (depth <= 0)
     {
-        return 0.5 * (record.m_normal + color{1, 1, 1});
+        return color{0, 0, 0};
+    }
+
+    hitRecord record{};
+    if (objects.hit(r, 0.001, std::numeric_limits<double>::infinity(), record))
+    {
+        ray scattered {};
+        color attenuation {};
+        if (record.m_material->scatter(r, record, attenuation, scattered))
+        {
+            return attenuation * rayColor(scattered, objects, depth - 1);
+        }
+        return color{0,0,0};
     }
 
     Vec3 unit_direction = normalize(r.getDirection());
@@ -77,7 +88,7 @@ void Camera::render(const HittableList &objects)
             for (int s = 0; s < m_samples; s++)
             {
                 ray pixelRay{generateRay(pixelCenter)};
-                accumulated += rayColor(pixelRay, objects);
+                accumulated += rayColor(pixelRay, objects, 10);
             }
             write_color(out, accumulated / m_samples);
         }

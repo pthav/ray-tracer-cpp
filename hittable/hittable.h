@@ -1,13 +1,18 @@
 #ifndef HITTABLE_H
 #define HITTABLE_H
+#include <memory>
+
 #include "../vector/ray.h"
 #include "../vector/vector.h"
+
+class Material;
 
 // hitRecord stores information about a ray intersection with an object
 struct hitRecord
 {
     point3 m_intersection{};
     Vec3 m_normal{};
+    std::shared_ptr<Material> m_material{};
     bool m_isFrontFace{};
     double m_t{};
 };

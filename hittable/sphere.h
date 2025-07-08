@@ -8,9 +8,13 @@ class Sphere final : public Hittable
 private:
     point3 m_center{};
     double m_radius{};
+    std::shared_ptr<Material> m_material{};
 
 public:
-    Sphere(double x, double y, double z, double r): m_center{x, y, z}, m_radius{r}
+    Sphere(double x, double y, double z, double r, const std::shared_ptr<Material> &material)
+        : m_center{x, y, z},
+          m_radius{r},
+          m_material{material}
     {
     }
 

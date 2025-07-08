@@ -32,6 +32,7 @@ bool Sphere::hit(const ray &r, double rayTMin, double rayTMax, hitRecord &rec) c
     // Fill out hit record
     rec.m_t = hitT;
     rec.m_intersection = r.at(hitT);
+    rec.m_material = m_material;
     auto normal{(rec.m_intersection - m_center) / m_radius};
     setNormal(r, normal, rec);
 

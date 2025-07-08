@@ -15,6 +15,11 @@ add_executable(ray_tracer_cpp main.cpp
         hittable/hittable_list.cpp
         render/camera.h
         render/camera.cpp
+        materials/material.h
+        materials/diffuse.h
+        materials/metal.h
+        materials/diffuse.cpp
+        materials/metal.cpp
 )
 
 include(FetchContent)
