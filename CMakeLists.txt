@@ -20,6 +20,9 @@ add_executable(ray_tracer_cpp main.cpp
         materials/metal.h
         materials/diffuse.cpp
         materials/metal.cpp
+        materials/dielectric.h
+        materials/dielectric.cpp
+        materials/material.cpp
 )
 
 include(FetchContent)

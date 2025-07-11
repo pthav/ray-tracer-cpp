@@ -43,7 +43,7 @@ ray Camera::generateRay(const point3 &pixel)
 
     Vec3 origin{m_cameraCenter};
     Vec3 direction{(pixel + du + dv) - origin};
-    ray randomRay{origin, direction};
+    ray randomRay{origin, normalize(direction)};
 
     return randomRay;
 }

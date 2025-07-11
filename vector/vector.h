@@ -1,5 +1,6 @@
 #ifndef VECTOR_H
 #define VECTOR_H
+#include <cmath>
 #include <iosfwd>
 
 class Vec3
@@ -50,6 +51,19 @@ public:
 
     friend std::ostream &operator<<(std::ostream &os, const Vec3 &v);
 };
+
+inline Vec3 reflect(const Vec3 &in, const Vec3 &n)
+{
+    auto reflection {in - n * 2 * dot(in,n)};
+    return normalize(reflection);
+}
+
+inline Vec3 refract(const Vec3& in, const Vec3& n, double refractiveRatio) {
+    auto cosTheta = std::fmin(dot(-in, n), 1.0);
+    Vec3 rOutPerp =  refractiveRatio * (in + cosTheta*n);
+    Vec3 rOutParallel = -std::sqrt(std::fabs(1.0 - rOutPerp.lengthSquared())) * n;
+    return rOutPerp + rOutParallel;
+}
 
 using point3 = Vec3;
 

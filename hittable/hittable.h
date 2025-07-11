@@ -1,5 +1,6 @@
 #ifndef HITTABLE_H
 #define HITTABLE_H
+#include <cassert>
 #include <memory>
 
 #include "../vector/ray.h"
@@ -29,16 +30,8 @@ public:
     // and store whether the intersection occurs on the front face
     static void setNormal(const ray &r, const Vec3 &n, hitRecord &rec)
     {
-        // Check which side of object hit
-        if (dot(n, r.getDirection()) < 0)
-        {
-            rec.m_normal = n;
-            rec.m_isFrontFace = true;
-        } else
-        {
-            rec.m_normal = -n;
-            rec.m_isFrontFace = false;
-        }
+        rec.m_isFrontFace = dot(r.getDirection(), n) < 0;
+        rec.m_normal = rec.m_isFrontFace ? n : -n;
     }
 };
 

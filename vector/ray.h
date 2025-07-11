@@ -5,29 +5,36 @@
 class ray
 {
 private:
-    point3 origin{};
-    Vec3 direction{};
+    point3 m_origin{};
+    Vec3 m_direction{};
+    double m_refractionIndex{};
 
 public:
     ray() = default;
 
-    ray(const point3 &origin, const Vec3 &direction) : origin{origin}, direction{direction}
+    ray(const point3 &origin, const Vec3 &direction, const double refractionIndex = 1.0003)
+    : m_origin{origin}, m_direction{direction}, m_refractionIndex{refractionIndex}
     {
     }
 
     [[nodiscard]] const point3 &getOrigin() const
     {
-        return origin;
+        return m_origin;
     }
 
     [[nodiscard]] const Vec3 &getDirection() const
     {
-        return direction;
+        return m_direction;
+    }
+
+    [[nodiscard]] double getRefractionIndex() const
+    {
+        return m_refractionIndex;
     }
 
     [[nodiscard]] point3 at(double t) const
     {
-        return origin + t * direction;
+        return m_origin + t * m_direction;
     }
 };
 
