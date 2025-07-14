@@ -10,21 +10,28 @@ void Camera::initialize()
     m_imageHeight = (m_imageHeight < 1) ? 1 : m_imageHeight;
 
     // Camera settings
-    auto focalLength{1.0};
-    auto viewportHeight{2.0};
+    auto focalLength{(m_lookFrom - m_lookAt).length()};
+    auto theta {(M_PI / 180.0) * m_vfov};
+    auto h {std::tan(theta/2)};
+    auto viewportHeight{2.0 * h * focalLength};
     auto viewportWidth{viewportHeight * (static_cast<double>(m_imageWidth) / m_imageHeight)};
-    m_cameraCenter = point3{0, 0, 0};
+    auto cameraCenter {m_lookFrom};
+
+    // Camera orthonormal basis
+    m_w = normalize(m_lookFrom - m_lookAt);
+    m_u = normalize(cross(m_up, m_w));
+    m_v = cross(m_w, m_u);
 
     // Viewport vectors
-    Vec3 viewportU{viewportWidth, 0, 0};
-    Vec3 viewportV{0, -viewportHeight, 0};
+    auto viewportU{viewportWidth * m_u};
+    auto viewportV{viewportHeight * -m_v};
 
     // Pixel delta vectors
     m_pixelU = viewportU / m_imageWidth;
     m_pixelV = viewportV / m_imageHeight;
 
     // Upper left
-    auto viewportUpperLeft{m_cameraCenter - Vec3{0, 0, focalLength} - 0.5 * viewportU - 0.5 * viewportV};
+    auto viewportUpperLeft{cameraCenter - focalLength * m_w - 0.5 * viewportU - 0.5 * viewportV};
     m_pixel00Loc = viewportUpperLeft + 0.5 * m_pixelU + 0.5 * m_pixelV;
 
     // Random
@@ -41,9 +48,10 @@ ray Camera::generateRay(const point3 &pixel)
     Vec3 du{m_pixelU * randomU};
     Vec3 dv{m_pixelV * randomV};
 
-    Vec3 origin{m_cameraCenter};
+    Vec3 origin{m_lookFrom};
     Vec3 direction{(pixel + du + dv) - origin};
-    ray randomRay{origin, normalize(direction)};
+    double time{m_distribution(m_gen)};
+    ray randomRay{origin, normalize(direction), time};
 
     return randomRay;
 }
@@ -88,7 +96,7 @@ void Camera::render(const HittableList &objects)
             for (int s = 0; s < m_samples; s++)
             {
                 ray pixelRay{generateRay(pixelCenter)};
-                accumulated += rayColor(pixelRay, objects, 10);
+                accumulated += rayColor(pixelRay, objects, m_maxDepth);
             }
             write_color(out, accumulated / m_samples);
         }

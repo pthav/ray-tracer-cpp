@@ -8,12 +8,13 @@ private:
     point3 m_origin{};
     Vec3 m_direction{};
     double m_refractionIndex{};
+    double m_timeOrigin{};
 
 public:
     ray() = default;
 
-    ray(const point3 &origin, const Vec3 &direction, const double refractionIndex = 1.0003)
-    : m_origin{origin}, m_direction{direction}, m_refractionIndex{refractionIndex}
+    ray(const point3 &origin, const Vec3 &direction, double timeOrigin)
+    : m_origin{origin}, m_direction{direction}, m_timeOrigin{timeOrigin}
     {
     }
 
@@ -27,9 +28,9 @@ public:
         return m_direction;
     }
 
-    [[nodiscard]] double getRefractionIndex() const
+    [[nodiscard]] double getTime() const
     {
-        return m_refractionIndex;
+        return m_timeOrigin;
     }
 
     [[nodiscard]] point3 at(double t) const

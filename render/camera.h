@@ -17,6 +17,9 @@ private:
     point3 m_pixel00Loc{};
     std::mt19937 m_gen;
     std::uniform_real_distribution<> m_distribution{};
+    Vec3 m_u;
+    Vec3 m_v;
+    Vec3 m_w;
 
     void initialize();
 
@@ -28,6 +31,11 @@ public:
     int m_imageWidth{400};
     int m_samples{10};
     double m_aspectRatio{16.0 / 9.0};
+    double m_vfov{90};
+    int m_maxDepth{10};
+    Vec3 m_lookAt{0,0,-1};
+    Vec3 m_lookFrom{0,0,0};
+    Vec3 m_up{0,1,0};
 
     Camera() = default;
 

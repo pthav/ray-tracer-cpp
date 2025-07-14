@@ -2,30 +2,6 @@
 
 #include <cassert>
 
-// auto refractiveRatio{ni / nt};
-// auto d{-in}; // Direction away from surface
-// auto z{(refractiveRatio) * (dot(d, n) * n - d)};
-//
-// // Total internal reflection will occur in this scenario
-// if (z.lengthSquared() > 1.0)
-// {
-//     fr = 1.0;
-//     return false;
-// }
-//
-// t = z - (std::sqrt(1 - z.lengthSquared())) * n; // Transmission vector
-// auto rPar{
-//     ((nt * dot(n, d) + ni * dot(n, t)) /
-//      (nt * dot(n, d) - ni * dot(n, t)))
-// }; // Parallel polarized light
-// auto rPerp{
-//     ((ni * dot(n, d) + nt * dot(n, t)) /
-//      (ni * dot(n, d) - nt * dot(n, t)))
-// }; // Perpendicular polarized light
-//
-// fr = 0.5 * (rPar * rPar + rPerp * rPerp); // Percent of light that reflects
-// return true;
-
 // Randomly select whether to generate a reflected or refracted ray based on fr.
 bool DielectricMaterial::scatter(const ray &in, const hitRecord &record, color &attenuation, ray &scattered)
 {
@@ -47,6 +23,6 @@ bool DielectricMaterial::scatter(const ray &in, const hitRecord &record, color &
         direction = refract(unitDirection, record.m_normal, ri);
     }
 
-    scattered = ray(record.m_intersection, direction);
+    scattered = ray(record.m_intersection, direction, in.getTime());
     return true;
 }

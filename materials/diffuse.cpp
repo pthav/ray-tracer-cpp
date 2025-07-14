@@ -16,7 +16,7 @@ Vec3 DiffuseMaterial::cosineWeightedSample(const hitRecord &record)
         tangent = normalize(Vec3(-record.m_normal[1], record.m_normal[0], 0));
     else
         tangent = normalize(Vec3(0, -record.m_normal[2], record.m_normal[1]));
-    auto tangent2 {cross(localDirection,tangent)};
+    auto tangent2 {cross(record.m_normal,tangent)};
 
     // Convert local coordinates to global coordinates
     return normalize(tangent * localDirection[0] + tangent2 * localDirection[1] + record.m_normal * localDirection[2]);
@@ -24,7 +24,7 @@ Vec3 DiffuseMaterial::cosineWeightedSample(const hitRecord &record)
 
 bool DiffuseMaterial::scatter(const ray &in, const hitRecord &record, color &attenuation, ray &scattered)
 {
-    scattered = ray{record.m_intersection,cosineWeightedSample(record), in.getRefractionIndex()};
+    scattered = ray{record.m_intersection,cosineWeightedSample(record),in.getTime()};
     attenuation = m_albedo;
     return true;
 }
