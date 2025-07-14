@@ -3,6 +3,8 @@
 #include <fstream>
 #include <limits>
 
+#include "../utility/random.h"
+
 void Camera::initialize()
 {
     // Image settings
@@ -33,24 +35,19 @@ void Camera::initialize()
     // Upper left
     auto viewportUpperLeft{cameraCenter - focalLength * m_w - 0.5 * viewportU - 0.5 * viewportV};
     m_pixel00Loc = viewportUpperLeft + 0.5 * m_pixelU + 0.5 * m_pixelV;
-
-    // Random
-    std::random_device rd{};
-    m_gen.seed(rd());
-    m_distribution = std::uniform_real_distribution<>(-1.0 / 2.0, 1.0 / 2.0);
 }
 
 // Randomly generate a random ray pointing within a given pixel
-ray Camera::generateRay(const point3 &pixel)
+ray Camera::generateRay(const point3 &pixel) const
 {
-    double randomU{m_distribution(m_gen)};
-    double randomV{m_distribution(m_gen)};
+    double randomU{Random::randomDouble() - (1.0 / 2.0)};
+    double randomV{Random::randomDouble() - (1.0 / 2.0)};
     Vec3 du{m_pixelU * randomU};
     Vec3 dv{m_pixelV * randomV};
 
     Vec3 origin{m_lookFrom};
     Vec3 direction{(pixel + du + dv) - origin};
-    double time{m_distribution(m_gen)};
+    double time{Random::randomDouble()};
     ray randomRay{origin, normalize(direction), time};
 
     return randomRay;

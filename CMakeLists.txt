@@ -22,7 +22,10 @@ add_executable(ray_tracer_cpp main.cpp
         materials/metal.cpp
         materials/dielectric.h
         materials/dielectric.cpp
-        materials/material.cpp
+        utility/aabb.h
+        utility/aabb.cpp
+        utility/random.h
+        utility/interval.h
 )
 
 include(FetchContent)

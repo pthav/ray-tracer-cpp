@@ -1,4 +1,5 @@
 #include "dielectric.h"
+#include "../utility/random.h"
 
 #include <cassert>
 
@@ -15,7 +16,7 @@ bool DielectricMaterial::scatter(const ray &in, const hitRecord &record, color &
     bool cannotRefract = ri * sinTheta > 1.0;
     Vec3 direction {};
 
-    if (cannotRefract || m_distribution(m_gen) < reflectance(cosTheta, ri))
+    if (cannotRefract || Random::randomDouble() < reflectance(cosTheta, ri))
     {
         direction = reflect(unitDirection, record.m_normal);
     } else

@@ -26,8 +26,8 @@ int main()
     Camera camera{};
     camera.m_aspectRatio = 16.0 / 9.0;
     camera.m_imageWidth = 400;
-    camera.m_samples = 100;
-    camera.m_maxDepth = 50;
+    camera.m_samples = 10;
+    camera.m_maxDepth = 10;
     camera.m_vfov = 90;
     camera.m_lookFrom = point3(-2, 2, 1);
     camera.m_lookAt = point3(0, 0, -1);

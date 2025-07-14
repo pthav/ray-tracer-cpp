@@ -1,8 +1,6 @@
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include <random>
-
 #include "../materials/material.h"
 #include "../hittable/hittable_list.h"
 #include "../vector/color.h"
@@ -15,15 +13,13 @@ private:
     Vec3 m_pixelU{};
     Vec3 m_pixelV{};
     point3 m_pixel00Loc{};
-    std::mt19937 m_gen;
-    std::uniform_real_distribution<> m_distribution{};
     Vec3 m_u;
     Vec3 m_v;
     Vec3 m_w;
 
     void initialize();
 
-    ray generateRay(const point3 &pixel);
+    [[nodiscard]] ray generateRay(const point3 &pixel) const ;
 
     static color rayColor(const ray &r, const HittableList &objects, int depth);
 

@@ -1,10 +1,11 @@
 #include "diffuse.h"
+#include "../utility/random.h"
 
 Vec3 DiffuseMaterial::cosineWeightedSample(const hitRecord &record)
 {
     // Generate a cosine weighted vector
-    auto r {std::sqrt(m_distribution(m_gen))};
-    auto theta {2 * std::numbers::pi * m_distribution(m_gen)};
+    auto r {std::sqrt(Random::randomDouble())};
+    auto theta {2 * std::numbers::pi * Random::randomDouble()};
     auto x {r * cos(theta)};
     auto y {r * sin(theta)};
     auto z {std::sqrt(1 - r * r)};

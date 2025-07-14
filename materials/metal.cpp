@@ -1,9 +1,10 @@
 #include "metal.h"
+#include "../utility/random.h"
 
 Vec3 MetalMaterial::fuzzyReflection(const Vec3 &in, const Vec3 &n) const
 {
     auto reflection {reflect(in,n)};
-    auto fuzz {Vec3{m_distribution(m_gen), m_distribution(m_gen), m_distribution(m_gen)}};
+    auto fuzz {Vec3{Random::randomDouble(), Random::randomDouble(), Random::randomDouble()}};
     auto fuzzyReflection {m_fuzz * fuzz + reflection};
     return normalize(fuzzyReflection);
 }
