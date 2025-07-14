@@ -1,6 +1,5 @@
 #ifndef HITTABLE_H
 #define HITTABLE_H
-#include <cassert>
 #include <memory>
 
 #include "../utility/aabb.h"
@@ -27,7 +26,7 @@ public:
 
     virtual bool hit(const ray &r, double rayTMin, double rayTMax, hitRecord &rec) const = 0;
 
-    // virtual AABB boundingBox() const = 0;
+    virtual AABB boundingBox() const = 0;
 
     // Set the normal to always face away from the ray
     // and store whether the intersection occurs on the front face

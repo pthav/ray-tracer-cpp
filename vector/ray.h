@@ -14,7 +14,11 @@ public:
     ray() = default;
 
     ray(const point3 &origin, const Vec3 &direction, double timeOrigin)
-    : m_origin{origin}, m_direction{direction}, m_timeOrigin{timeOrigin}
+        : m_origin{origin}, m_direction{direction}, m_timeOrigin{timeOrigin}
+    {
+    }
+
+    ray(const point3 &origin, const point3 &direction) : m_origin{origin}, m_direction{direction}
     {
     }
 

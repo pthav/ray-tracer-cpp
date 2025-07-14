@@ -1,10 +1,9 @@
 #include "hittable_list.h"
 
-#include <iostream>
-
 void HittableList::add(const std::shared_ptr<Hittable> &object)
 {
     m_objects.push_back(object);
+    m_boundingBox = AABB(m_boundingBox, object->boundingBox());
 }
 
 bool HittableList::hit(const ray &r, double rayTMin, double rayTMax, hitRecord &rec) const

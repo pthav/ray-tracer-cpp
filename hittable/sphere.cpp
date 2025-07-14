@@ -4,7 +4,7 @@
 
 bool Sphere::hit(const ray &r, double rayTMin, double rayTMax, hitRecord &rec) const
 {
-    auto currentCenter {m_centerStart + (m_centerEnd - m_centerStart) * r.getTime()};
+    auto currentCenter {m_center.at(r.getTime())};
     auto oc{currentCenter - r.getOrigin()};
     auto a{r.getDirection().lengthSquared()};
     auto h{dot(r.getDirection(), oc)};
