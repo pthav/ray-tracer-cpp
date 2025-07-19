@@ -26,6 +26,8 @@ add_executable(ray_tracer_cpp main.cpp
         utility/aabb.cpp
         utility/random.h
         utility/interval.h
+        hittable/bvh.h
+        hittable/bvh.cpp
 )
 
 include(FetchContent)

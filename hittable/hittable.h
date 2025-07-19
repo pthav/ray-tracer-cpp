@@ -26,7 +26,9 @@ public:
 
     virtual bool hit(const ray &r, double rayTMin, double rayTMax, hitRecord &rec) const = 0;
 
-    virtual AABB boundingBox() const = 0;
+    [[nodiscard]] virtual AABB boundingBox() const = 0;
+
+    [[nodiscard]] virtual const Vec3& centroid() const = 0;
 
     // Set the normal to always face away from the ray
     // and store whether the intersection occurs on the front face

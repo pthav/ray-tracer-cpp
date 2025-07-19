@@ -3,7 +3,7 @@
 #include "hittable.h"
 
 // Spherical object
-class Sphere final : public Hittable
+class Sphere : public Hittable
 {
 private:
     ray m_center{};
@@ -35,9 +35,14 @@ public:
 
     bool hit(const ray &r, double rayTMin, double rayTMax, hitRecord &rec) const override;
 
-    AABB boundingBox() const override
+    [[nodiscard]] AABB boundingBox() const override
     {
         return m_boundingBox;
+    }
+
+    [[nodiscard]] const Vec3& centroid() const override
+    {
+        return m_center.getOrigin();
     }
 };
 

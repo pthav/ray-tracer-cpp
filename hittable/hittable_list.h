@@ -24,9 +24,19 @@ public:
 
     bool hit(const ray &r, double rayTMin, double rayTMax, hitRecord &rec) const override;
 
-    AABB boundingBox() const override
+    [[nodiscard]] AABB boundingBox() const override
     {
         return m_boundingBox;
+    }
+
+    [[nodiscard]] const Vec3& centroid() const override
+    {
+        return m_boundingBox.centroid();
+    }
+
+    std::vector<std::shared_ptr<Hittable>> &getObjects()
+    {
+        return m_objects;
     }
 };
 

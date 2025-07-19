@@ -4,11 +4,10 @@
 
 class Interval
 {
-private:
+public:
     double m_start{};
     double m_end{};
 
-public:
     Interval() : m_start{-std::numeric_limits<double>::infinity()}, m_end{std::numeric_limits<double>::infinity()}
     {
     }
@@ -22,14 +21,15 @@ public:
     {
     }
 
-    double s() const
+    [[nodiscard]] double size() const
     {
-        return m_start;
+        return m_end - m_start;
     }
 
-    double e() const
+    [[nodiscard]] Interval expand(double delta) const
     {
-        return m_end;
+        auto padding {delta / 2};
+        return Interval{m_start - padding, m_end + padding};
     }
 };
 #endif //INTERVAL_H
