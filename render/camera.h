@@ -25,10 +25,10 @@ private:
 
 public:
     int m_imageWidth{400};
-    int m_samples{10};
+    int m_samples{100};
     double m_aspectRatio{16.0 / 9.0};
     double m_vfov{90};
-    int m_maxDepth{10};
+    int m_maxDepth{1};
     Vec3 m_lookAt{0,0,-1};
     Vec3 m_lookFrom{0,0,0};
     Vec3 m_up{0,1,0};

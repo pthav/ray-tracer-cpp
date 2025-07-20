@@ -24,7 +24,7 @@ class Hittable
 public:
     virtual ~Hittable() = default;
 
-    virtual bool hit(const ray &r, double rayTMin, double rayTMax, hitRecord &rec) const = 0;
+    virtual bool hit(const ray &r, Interval rayT, hitRecord &rec) const = 0;
 
     [[nodiscard]] virtual AABB boundingBox() const = 0;
 

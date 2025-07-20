@@ -33,7 +33,7 @@ public:
                              AABB(m_center.at(1) - rVec, m_center.at(1) + rVec));
     }
 
-    bool hit(const ray &r, double rayTMin, double rayTMax, hitRecord &rec) const override;
+    bool hit(const ray &r, Interval rayT, hitRecord &rec) const override;
 
     [[nodiscard]] AABB boundingBox() const override
     {

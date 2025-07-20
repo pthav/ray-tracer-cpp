@@ -28,9 +28,9 @@ public:
     BVH() = default;
 
     // This constructor is used for starting BVH tree construction from a root node
-    explicit BVH(std::shared_ptr<HittableList> list)
-        : m_aabb{list->boundingBox()},
-          m_children{list->getObjects()},
+    explicit BVH(HittableList list)
+        : m_aabb{list.boundingBox()},
+          m_children{list.getObjects()},
           m_count{static_cast<int>(m_children.size())}
     {
         subdivide();
@@ -56,7 +56,7 @@ public:
         return m_aabb.centroid();
     }
 
-    bool hit(const ray &r, double rayTMin, double rayTMax, hitRecord &rec) const override;
+    bool hit(const ray &r, Interval rayT, hitRecord &rec) const override;
 
     void subdivide();
 

@@ -1,7 +1,52 @@
 #include "bvh.h"
 
-bool BVH::hit(const ray &r, double rayTMin, double rayTMax, hitRecord &rec) const
+bool BVH::hit(const ray &r, Interval rayT, hitRecord &rec) const
 {
+    // Get the closest hit from the leaf nodes
+    if (isLeaf())
+    {
+        auto closest{rayT.m_end};
+        hitRecord tempRec{};
+        bool hitAnything{false};
+        for (const auto &child: m_children)
+        {
+            auto hit{child->hit(r, rayT, tempRec)};
+            hitAnything |= hit;
+            if (hit && tempRec.m_t < closest)
+            {
+                closest = tempRec.m_t;
+                rec = tempRec;
+            }
+        }
+        return hitAnything;
+    }
+
+    // Get child bounding box distance
+    auto leftChild{m_left.get()};
+    auto rightChild{m_right.get()};
+    auto leftDist{leftChild->m_aabb.hit(r, rayT)};
+    auto rightDist{rightChild->m_aabb.hit(r, rayT)};
+    if (leftDist > rightDist)
+    {
+        std::swap(leftChild, rightChild);
+        std::swap(leftDist, rightDist);
+    }
+
+    // Check from front to back if the bounding boxes register a hit
+    if (leftDist != 1e30f)
+    {
+        if (auto hit{leftChild->hit(r, rayT, rec)})
+        {
+            return hit;
+        }
+    }
+
+    if (rightDist != 1e30f)
+    {
+        return rightChild->hit(r, rayT, rec);
+    }
+
+    return false;
 }
 
 double BVH::bestSplit(int &axis, double &splitPos) const
@@ -57,7 +102,7 @@ double BVH::bestSplit(int &axis, double &splitPos) const
 
             rightSum += bins[m_bins - 1 - b].m_count;
             rightCount[m_bins - 2 - b] = rightSum;
-            rightAABB = AABB(rightAABB, bins[m_bins - 1 -b].m_aabb);
+            rightAABB = AABB(rightAABB, bins[m_bins - 1 - b].m_aabb);
             rightArea[m_bins - 2 - b] = rightAABB.surfaceArea();
         }
 
@@ -65,12 +110,12 @@ double BVH::bestSplit(int &axis, double &splitPos) const
         scale = (boundsMax - boundsMin) / m_bins;
         for (int b{0}; b < m_bins; b++)
         {
-            double planeCost {leftCount[b] * leftArea[b] + rightCount[b] * rightArea[b]};
+            double planeCost{leftCount[b] * leftArea[b] + rightCount[b] * rightArea[b]};
             if (planeCost < bestCost)
             {
                 bestCost = planeCost;
                 axis = a;
-                splitPos = boundsMin + (b+1) * scale;
+                splitPos = boundsMin + (b + 1) * scale;
             }
         }
     }
@@ -104,6 +149,13 @@ void BVH::subdivide()
             m_right->m_aabb = AABB(m_right->m_aabb, child->boundingBox());
             ++(m_right->m_count);
         }
+    }
+
+    if (m_left->m_count == 0 || m_right->m_count == 0)
+    {
+        m_left.reset();
+        m_right.reset();
+        return;
     }
 
     m_count = 0;

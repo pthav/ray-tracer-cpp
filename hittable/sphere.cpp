@@ -2,7 +2,7 @@
 
 #include <cmath>
 
-bool Sphere::hit(const ray &r, double rayTMin, double rayTMax, hitRecord &rec) const
+bool Sphere::hit(const ray &r, Interval rayT, hitRecord &rec) const
 {
     auto currentCenter {m_center.at(r.getTime())};
     auto oc{currentCenter - r.getOrigin()};
@@ -21,10 +21,10 @@ bool Sphere::hit(const ray &r, double rayTMin, double rayTMax, hitRecord &rec) c
 
     // Find the closest intersection that is within [rayTMin,rayTMax]
     auto hitT{(h - sqrtDiscriminant) / a};
-    if (hitT < rayTMin || hitT > rayTMax)
+    if (hitT < rayT.m_start || hitT > rayT.m_end)
     {
         hitT = (h + sqrtDiscriminant) / a;
-        if (hitT < rayTMin || hitT > rayTMax)
+        if (hitT < rayT.m_start || hitT > rayT.m_end)
         {
             return false;
         }

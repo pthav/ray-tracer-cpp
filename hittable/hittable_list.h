@@ -22,7 +22,7 @@ public:
 
     void add(const std::shared_ptr<Hittable> &object);
 
-    bool hit(const ray &r, double rayTMin, double rayTMax, hitRecord &rec) const override;
+    bool hit(const ray &r, Interval rayT, hitRecord &rec) const override;
 
     [[nodiscard]] AABB boundingBox() const override
     {

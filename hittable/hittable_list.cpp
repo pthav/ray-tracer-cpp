@@ -6,16 +6,16 @@ void HittableList::add(const std::shared_ptr<Hittable> &object)
     m_boundingBox = AABB(m_boundingBox, object->boundingBox());
 }
 
-bool HittableList::hit(const ray &r, double rayTMin, double rayTMax, hitRecord &rec) const
+bool HittableList::hit(const ray &r, Interval rayT, hitRecord &rec) const
 {
     hitRecord tempRec{};
     bool hitAny = false;
-    auto closest{rayTMax};
+    auto closest{rayT.m_end};
 
     // Find the closest object the ray hits
     for (const auto &object: m_objects)
     {
-        auto hit{object->hit(r, rayTMin, rayTMax, tempRec)};
+        auto hit{object->hit(r, rayT, tempRec)};
         hitAny |= hit;
         if (hit && tempRec.m_t < closest)
         {

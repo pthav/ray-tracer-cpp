@@ -1,3 +1,4 @@
+#include "hittable/bvh.h"
 #include "render/camera.h"
 #include "hittable/hittable_list.h"
 #include "hittable/sphere.h"
@@ -22,16 +23,19 @@ int main()
     objects.add(std::make_shared<Sphere>(point3{-1.0, 0.0, -1.0}, point3{-1.0,0.2,-1.2}, 0.4, material_bubble));
     objects.add(std::make_shared<Sphere>(point3{1.0, 0.0, -1.0}, point3{1.3,0.0,-1.1}, 0.5, material_right));
 
+    HittableList bvhList{};
+    bvhList.add(std::make_shared<BVH>(objects));
+
     // Create Camera
     Camera camera{};
     camera.m_aspectRatio = 16.0 / 9.0;
-    camera.m_imageWidth = 400;
-    camera.m_samples = 10;
+    camera.m_imageWidth = 600;
+    camera.m_samples = 100;
     camera.m_maxDepth = 10;
-    camera.m_vfov = 90;
+    camera.m_vfov = 60;
     camera.m_lookFrom = point3(-2, 2, 1);
     camera.m_lookAt = point3(0, 0, -1);
     camera.m_up = Vec3(0, 1, 0);
 
-    camera.render(objects);
+    camera.render(bvhList);
 }
