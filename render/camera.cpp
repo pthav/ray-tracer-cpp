@@ -61,7 +61,7 @@ color Camera::rayColor(const ray &r, const HittableList &objects, int depth)
     }
 
     hitRecord record{};
-    if (objects.hit(r, Interval(0.001, std::numeric_limits<double>::infinity()), record))
+    if (objects.hit(r, Interval{0.001, std::numeric_limits<double>::infinity()}, record))
     {
         ray scattered {};
         color attenuation {};

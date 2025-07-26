@@ -99,7 +99,7 @@ public:
         return bounds[0] * bounds[1] + bounds[1] * bounds[2] + bounds[2] * bounds[0];
     }
 
-    double hit(const ray &r, Interval &t) const;
+    [[nodiscard]] double hit(const ray &r) const;
 };
 
 #endif //AABB_H

@@ -1,13 +1,14 @@
 #include "aabb.h"
 
-double AABB::hit(const ray &r, Interval &t) const
+double AABB::hit(const ray &r) const
 {
     auto ro{r.getOrigin()};
     auto rd{r.getDirection()};
+    Interval t {-std::numeric_limits<double>::infinity(), std::numeric_limits<double>::infinity()};
 
     for (int a = 0; a < 3; a++)
     {
-        auto iAxis{(*this)[0]};
+        auto iAxis{(*this)[a]};
         auto dInv{1.0 / rd[a]};
 
         auto t0{(iAxis.m_start - ro[a]) * dInv};

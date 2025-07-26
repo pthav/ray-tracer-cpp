@@ -7,6 +7,7 @@
 #include "materials/dielectric.h"
 #include "materials/diffuse.h"
 #include "materials/metal.h"
+#include "utility/random.h"
 
 int main()
 {
@@ -24,6 +25,12 @@ int main()
     objects.add(std::make_shared<Sphere>(point3{-1.0, 0.0, -1.0}, point3{-1.0,0.2,-1.2}, 0.5, material_left));
     objects.add(std::make_shared<Sphere>(point3{-1.0, 0.0, -1.0}, point3{-1.0,0.2,-1.2}, 0.4, material_bubble));
     objects.add(std::make_shared<Sphere>(point3{1.0, 0.0, -1.0}, point3{1.3,0.0,-1.1}, 0.5, material_right));
+
+    for (int i {0}; i < 50; i++)
+    {
+        point3 center {Random::randomDouble() * 6 - 3,Random::randomDouble() * 5,Random::randomDouble() * 6 - 3};
+        objects.add(std::make_shared<Sphere>(center, Random::randomDouble() * 0.3 + 0.1, material_center));
+    }
 
     auto before {std::chrono::high_resolution_clock::now()};
     HittableList bvhList{};

@@ -24,8 +24,8 @@ bool BVH::hit(const ray &r, Interval rayT, hitRecord &rec) const
     // Get child bounding box distance
     auto leftChild{m_left.get()};
     auto rightChild{m_right.get()};
-    auto leftDist{leftChild->m_aabb.hit(r, rayT)};
-    auto rightDist{rightChild->m_aabb.hit(r, rayT)};
+    auto leftDist{leftChild->m_aabb.hit(r)};
+    auto rightDist{rightChild->m_aabb.hit(r)};
     if (leftDist > rightDist)
     {
         std::swap(leftChild, rightChild);
@@ -95,20 +95,26 @@ double BVH::bestSplit(int &axis, double &splitPos) const
         AABB rightAABB{bins[m_bins - 1].m_aabb};
         for (int b{0}; b < m_bins - 1; b++)
         {
-            leftSum += bins[b].m_count;
+            if (bins[b].m_count > 0)
+            {
+                leftSum += bins[b].m_count;
+                leftAABB = AABB(leftAABB, bins[b].m_aabb);
+            }
             leftCount[b] = leftSum;
-            leftAABB = AABB(leftAABB, bins[b].m_aabb);
             leftArea[b] = leftAABB.surfaceArea();
 
-            rightSum += bins[m_bins - 1 - b].m_count;
+            if (bins[m_bins - 1 - b].m_count > 0)
+            {
+                rightSum += bins[m_bins - 1 - b].m_count;
+                rightAABB = AABB(rightAABB, bins[m_bins - 1 - b].m_aabb);
+            }
             rightCount[m_bins - 2 - b] = rightSum;
-            rightAABB = AABB(rightAABB, bins[m_bins - 1 - b].m_aabb);
             rightArea[m_bins - 2 - b] = rightAABB.surfaceArea();
         }
 
         // Get best split
         scale = (boundsMax - boundsMin) / m_bins;
-        for (int b{0}; b < m_bins; b++)
+        for (int b{0}; b < m_bins - 1; b++)
         {
             double planeCost{leftCount[b] * leftArea[b] + rightCount[b] * rightArea[b]};
             if (planeCost < bestCost)
@@ -129,7 +135,7 @@ void BVH::subdivide()
     auto splitCost{bestSplit(axis, splitPos)};
     auto noSplitCost{sahCost()};
 
-    if (noSplitCost > splitCost)
+    if (noSplitCost < splitCost)
     {
         return;
     }
