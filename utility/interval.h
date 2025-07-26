@@ -18,7 +18,7 @@ public:
     }
 
     Interval(Interval int1, Interval int2)
-        : m_start{std::min(int1.m_start, int2.m_end)}, m_end{std::max(int1.m_end, int2.m_end)}
+        : m_start{std::min(int1.m_start, int2.m_start)}, m_end{std::max(int1.m_end, int2.m_end)}
     {
     }
 

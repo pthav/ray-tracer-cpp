@@ -8,10 +8,10 @@
 class AABB
 {
 private:
-    Interval m_x{};
-    Interval m_y{};
-    Interval m_z{};
-    Vec3 m_centroid{};
+    Interval m_x{0,0};
+    Interval m_y{0,0};
+    Interval m_z{0,0};
+    Vec3 m_centroid{0,0,0};
 
     // Ensure minimum dimension sizes
     void expand()
@@ -37,28 +37,28 @@ public:
     AABB(Interval x, Interval y, Interval z)
         : m_x{x},
           m_y{y},
-          m_z{z},
-          m_centroid{calculateCentroid()}
+          m_z{z}
     {
         expand();
+        m_centroid = calculateCentroid();
     }
 
     AABB(const point3 &point1, const point3 &point2)
         : m_x{Interval(point1[0], point2[0])},
           m_y{Interval(point1[1], point2[1])},
-          m_z{Interval(point1[2], point2[2])},
-          m_centroid{calculateCentroid()}
+          m_z{Interval(point1[2], point2[2])}
     {
         expand();
+        m_centroid = calculateCentroid();
     }
 
     AABB(const AABB &aabb1, const AABB &aabb2)
         : m_x{Interval(aabb1.m_x, aabb2.m_x)},
           m_y{Interval(aabb1.m_y, aabb2.m_y)},
-          m_z{Interval(aabb1.m_z, aabb2.m_z)},
-          m_centroid{calculateCentroid()}
+          m_z{Interval(aabb1.m_z, aabb2.m_z)}
     {
         expand();
+        m_centroid = calculateCentroid();
     }
 
     const Interval &operator[](size_t i) const

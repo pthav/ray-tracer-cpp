@@ -1,3 +1,5 @@
+#include <chrono>
+
 #include "hittable/bvh.h"
 #include "render/camera.h"
 #include "hittable/hittable_list.h"
@@ -23,19 +25,28 @@ int main()
     objects.add(std::make_shared<Sphere>(point3{-1.0, 0.0, -1.0}, point3{-1.0,0.2,-1.2}, 0.4, material_bubble));
     objects.add(std::make_shared<Sphere>(point3{1.0, 0.0, -1.0}, point3{1.3,0.0,-1.1}, 0.5, material_right));
 
+    auto before {std::chrono::high_resolution_clock::now()};
     HittableList bvhList{};
     bvhList.add(std::make_shared<BVH>(objects));
+    auto after {std::chrono::high_resolution_clock::now()};
+    auto duration {std::chrono::duration_cast<std::chrono::milliseconds>(after - before)};
+    std::cerr << "BVH construction took " << duration.count() << " ms\n";
 
     // Create Camera
     Camera camera{};
     camera.m_aspectRatio = 16.0 / 9.0;
-    camera.m_imageWidth = 600;
-    camera.m_samples = 100;
+    camera.m_imageWidth = 400;
+    camera.m_samples = 10;
     camera.m_maxDepth = 10;
-    camera.m_vfov = 60;
+    camera.m_vfov = 90;
     camera.m_lookFrom = point3(-2, 2, 1);
     camera.m_lookAt = point3(0, 0, -1);
     camera.m_up = Vec3(0, 1, 0);
 
+    std::cerr << "Program started\n";
+    before = std::chrono::high_resolution_clock::now();
     camera.render(bvhList);
+    after = std::chrono::high_resolution_clock::now();
+    duration = std::chrono::duration_cast<std::chrono::milliseconds>(after - before);
+    std::cerr << "Render took " << duration.count() << " ms";
 }
