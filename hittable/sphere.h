@@ -35,6 +35,15 @@ public:
 
     bool hit(const ray &r, Interval rayT, hitRecord &rec) const override;
 
+    static void getUV(double &u, double &v, const point3 &p)
+    {
+        auto theta{std::acos(-p[1])};
+        auto phi{std::atan2(-p[2], p[0]) + std::numbers::pi};
+
+        u = phi / (2 * std::numbers::pi);
+        v = theta / std::numbers::pi;
+    }
+
     [[nodiscard]] AABB boundingBox() const override
     {
         return m_boundingBox;

@@ -8,6 +8,24 @@
 #include "../materials/metal.h"
 #include "../utility/random.h"
 #include "../hittable/sphere.h"
+#include "../textures/image_texture.h"
+
+inline void earth(HittableList &objects, Camera &camera)
+{
+    auto earthTexture {std::make_shared<ImageTexture>("earthmap.jpg")};
+    auto earthSurface {std::make_shared<DiffuseMaterial>(earthTexture)};
+    auto earthSphere {std::make_shared<Sphere>(point3{0,0,-1},2,earthSurface)};
+    objects.add(earthSphere);
+
+    camera.m_aspectRatio = 16.0 / 9.0;
+    camera.m_imageWidth = 400;
+    camera.m_samples = 100;
+    camera.m_maxDepth = 50;
+    camera.m_vfov = 20;
+    camera.m_lookFrom = point3(0, 0, 12);
+    camera.m_lookAt = point3(0, 0, 0);
+    camera.m_up = Vec3(0, 1, 0);
+}
 
 inline void randomScene(HittableList &objects, Camera &camera)
 {

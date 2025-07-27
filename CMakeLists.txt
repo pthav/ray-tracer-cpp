@@ -29,6 +29,11 @@ add_executable(ray_tracer_cpp main.cpp
         hittable/bvh.h
         hittable/bvh.cpp
         render/scene.h
+        textures/texture.h
+        textures/solid.h
+        external/stb_image.h
+        utility/rtw_stb_image.h
+        textures/image_texture.h
 )
 
 include(FetchContent)

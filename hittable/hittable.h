@@ -16,6 +16,8 @@ struct hitRecord
     std::shared_ptr<Material> m_material{};
     bool m_isFrontFace{};
     double m_t{};
+    double m_u{};
+    double m_v{};
 };
 
 // hittable defines a base class for objects

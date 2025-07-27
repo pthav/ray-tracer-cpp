@@ -4,7 +4,7 @@
 
 bool Sphere::hit(const ray &r, Interval rayT, hitRecord &rec) const
 {
-    auto currentCenter {m_center.at(r.getTime())};
+    auto currentCenter{m_center.at(r.getTime())};
     auto oc{currentCenter - r.getOrigin()};
     auto a{r.getDirection().lengthSquared()};
     auto h{dot(r.getDirection(), oc)};
@@ -34,6 +34,7 @@ bool Sphere::hit(const ray &r, Interval rayT, hitRecord &rec) const
     rec.m_t = hitT;
     rec.m_intersection = r.at(hitT);
     rec.m_material = m_material;
+    getUV(rec.m_u, rec.m_v, (rec.m_intersection - m_center.at(r.getTime())) / m_radius);
     auto normal{(rec.m_intersection - currentCenter) / m_radius};
     setNormal(r, normal, rec);
 

@@ -10,7 +10,13 @@ int main()
 {
     HittableList objects{};
     Camera camera{};
-    randomScene(objects, camera);
+
+    // Choose scene
+    switch (2)
+    {
+        case 1: randomScene(objects, camera); break;
+        case 2: earth(objects, camera); break;
+    }
 
     auto before{std::chrono::high_resolution_clock::now()};
     HittableList bvhList{};

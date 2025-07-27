@@ -26,7 +26,7 @@ Vec3 DiffuseMaterial::cosineWeightedSample(const hitRecord &record)
 bool DiffuseMaterial::scatter(const ray &in, const hitRecord &record, color &attenuation, ray &scattered)
 {
     scattered = ray{record.m_intersection,cosineWeightedSample(record),in.getTime()};
-    attenuation = m_albedo;
+    attenuation = m_texture->value(record.m_u,record.m_v,record.m_intersection);
     return true;
 }
 
