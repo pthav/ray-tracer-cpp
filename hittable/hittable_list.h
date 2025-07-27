@@ -29,11 +29,6 @@ public:
         return m_boundingBox;
     }
 
-    [[nodiscard]] const Vec3& centroid() const override
-    {
-        return m_boundingBox.centroid();
-    }
-
     std::vector<std::shared_ptr<Hittable>> &getObjects()
     {
         return m_objects;

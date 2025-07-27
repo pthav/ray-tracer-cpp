@@ -39,11 +39,6 @@ public:
     {
         return m_boundingBox;
     }
-
-    [[nodiscard]] const Vec3& centroid() const override
-    {
-        return m_center.getOrigin();
-    }
 };
 
 #endif //SPHERE_H

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.31)
+cmake_minimum_required(VERSION 3.28.3)
 project(ray_tracer_cpp)
 
 set(CMAKE_CXX_STANDARD 23)
@@ -28,6 +28,7 @@ add_executable(ray_tracer_cpp main.cpp
         utility/interval.h
         hittable/bvh.h
         hittable/bvh.cpp
+        render/scene.h
 )
 
 include(FetchContent)

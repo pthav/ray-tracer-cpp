@@ -4,102 +4,79 @@
 #include "../vector/vector.h"
 #include "../vector/ray.h"
 
-
 class AABB
 {
-private:
-    Interval m_x{0,0};
-    Interval m_y{0,0};
-    Interval m_z{0,0};
-    Vec3 m_centroid{0,0,0};
-
-    // Ensure minimum dimension sizes
-    void expand()
-    {
-        double delta {0.0001};
-        if (m_x.size() < delta)
-        {
-            m_x = m_x.expand(delta);
-        }
-        if (m_y.size() < delta)
-        {
-            m_y = m_y.expand(delta);
-        }
-        if (m_z.size() < delta)
-        {
-            m_z = m_z.expand(delta);
-        }
-    }
-
 public:
+    Interval m_x, m_y, m_z;
+
     AABB() = default;
 
-    AABB(Interval x, Interval y, Interval z)
-        : m_x{x},
-          m_y{y},
-          m_z{z}
+    AABB(const Interval &x, const Interval &y, const Interval &z)
+        : m_x{x}, m_y{y}, m_z{z}
     {
-        expand();
-        m_centroid = calculateCentroid();
+        padToMinimums();
     }
 
-    AABB(const point3 &point1, const point3 &point2)
-        : m_x{Interval(point1[0], point2[0])},
-          m_y{Interval(point1[1], point2[1])},
-          m_z{Interval(point1[2], point2[2])}
+    AABB(const point3 &a, const point3 &b)
     {
-        expand();
-        m_centroid = calculateCentroid();
+        m_x = (a[0] <= b[0]) ? Interval(a[0], b[0]) : Interval(b[0], a[0]);
+        m_y = (a[1] <= b[1]) ? Interval(a[1], b[1]) : Interval(b[1], a[1]);
+        m_z = (a[2] <= b[2]) ? Interval(a[2], b[2]) : Interval(b[2], a[2]);
+
+        padToMinimums();
     }
 
-    AABB(const AABB &aabb1, const AABB &aabb2)
-        : m_x{Interval(aabb1.m_x, aabb2.m_x)},
-          m_y{Interval(aabb1.m_y, aabb2.m_y)},
-          m_z{Interval(aabb1.m_z, aabb2.m_z)}
+    AABB(const AABB &box0, const AABB &box1)
     {
-        expand();
-        m_centroid = calculateCentroid();
+        m_x = Interval(box0.m_x, box1.m_x);
+        m_y = Interval(box0.m_y, box1.m_y);
+        m_z = Interval(box0.m_z, box1.m_z);
     }
 
-    const Interval &operator[](size_t i) const
+    [[nodiscard]] const Interval &axisInterval(int n) const
     {
-        if (i == 0)
-        {
-            return m_x;
-        }
-        if (i == 1)
-        {
-            return m_y;
-        }
-        return m_z;
+        if (n == 1) return m_y;
+        if (n == 2) return m_z;
+        return m_x;
     }
 
-    [[nodiscard]] Vec3 calculateCentroid() const
+    [[nodiscard]] bool hit(const ray &r, Interval rayT) const;
+
+    [[nodiscard]] int longestAxis() const
     {
-        return Vec3(
-                   m_x.m_start + m_x.m_end,
-                   m_y.m_start + m_y.m_end,
-                   m_z.m_start + m_z.m_end
-               ) / 2.0;
+        // Returns the index of the longest axis of the bounding box.
+
+        if (m_x.size() > m_y.size())
+            return m_x.size() > m_z.size() ? 0 : 2;
+        else
+            return m_y.size() > m_z.size() ? 1 : 2;
     }
 
-    [[nodiscard]] const Vec3 &centroid() const
+    static const AABB empty, universe;
+
+private:
+    // Prevent a volumeless AABB
+    void padToMinimums()
     {
-        return m_centroid;
+        double delta = 0.0001;
+        if (m_x.size() < delta) m_x = m_x.expand(delta);
+        if (m_y.size() < delta) m_y = m_y.expand(delta);
+        if (m_z.size() < delta) m_z = m_z.expand(delta);
     }
-
-    [[nodiscard]] double surfaceArea() const
-    {
-        Vec3 bounds {
-            m_x.m_end - m_x.m_start,
-            m_y.m_end - m_y.m_start,
-            m_z.m_end - m_z.m_start
-        };
-
-        return bounds[0] * bounds[1] + bounds[1] * bounds[2] + bounds[2] * bounds[0];
-    }
-
-    [[nodiscard]] double hit(const ray &r) const;
 };
 
-#endif //AABB_H
+inline const AABB AABB::empty = AABB(Interval::empty, Interval::empty, Interval::empty);
+inline const AABB AABB::universe = AABB(Interval::universe, Interval::universe, Interval::universe);
+
+inline AABB operator+(const AABB &bbox, const Vec3 &offset)
+{
+    return {bbox.m_x + offset[0], bbox.m_y + offset[1], bbox.m_z + offset[2]};
+}
+
+inline AABB operator+(const Vec3 &offset, const AABB &bbox)
+{
+    return bbox + offset;
+}
+
+
+#endif

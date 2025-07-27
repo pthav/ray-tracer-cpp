@@ -10,7 +10,7 @@ bool HittableList::hit(const ray &r, Interval rayT, hitRecord &rec) const
 {
     hitRecord tempRec{};
     bool hitAny = false;
-    auto closest{rayT.m_end};
+    auto closest{rayT.m_max};
 
     // Find the closest object the ray hits
     for (const auto &object: m_objects)

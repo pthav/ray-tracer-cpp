@@ -21,10 +21,10 @@ bool Sphere::hit(const ray &r, Interval rayT, hitRecord &rec) const
 
     // Find the closest intersection that is within [rayTMin,rayTMax]
     auto hitT{(h - sqrtDiscriminant) / a};
-    if (hitT < rayT.m_start || hitT > rayT.m_end)
+    if (hitT < rayT.m_min || hitT > rayT.m_max)
     {
         hitT = (h + sqrtDiscriminant) / a;
-        if (hitT < rayT.m_start || hitT > rayT.m_end)
+        if (hitT < rayT.m_min || hitT > rayT.m_max)
         {
             return false;
         }

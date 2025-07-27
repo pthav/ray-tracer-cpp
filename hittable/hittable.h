@@ -28,8 +28,6 @@ public:
 
     [[nodiscard]] virtual AABB boundingBox() const = 0;
 
-    [[nodiscard]] virtual const Vec3& centroid() const = 0;
-
     // Set the normal to always face away from the ray
     // and store whether the intersection occurs on the front face
     static void setNormal(const ray &r, const Vec3 &n, hitRecord &rec)
