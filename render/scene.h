@@ -9,6 +9,7 @@
 #include "../utility/random.h"
 #include "../hittable/sphere.h"
 #include "../textures/image_texture.h"
+#include "../textures/noise_texture.h"
 
 inline void earth(HittableList &objects, Camera &camera)
 {
@@ -25,6 +26,22 @@ inline void earth(HittableList &objects, Camera &camera)
     camera.m_lookFrom = point3(0, 0, 12);
     camera.m_lookAt = point3(0, 0, 0);
     camera.m_up = Vec3(0, 1, 0);
+}
+
+inline void perlin(HittableList &objects, Camera &camera)
+{
+    auto perlinTexture = std::make_shared<NoiseTexture>(8);
+    objects.add(std::make_shared<Sphere>(point3(0,-1000,0), 1000, std::make_shared<DiffuseMaterial>(perlinTexture)));
+    objects.add(std::make_shared<Sphere>(point3(0,2,0), 2, std::make_shared<DiffuseMaterial>(perlinTexture)));
+
+    camera.m_aspectRatio      = 16.0 / 9.0;
+    camera.m_imageWidth       = 400;
+    camera.m_samples = 100;
+    camera.m_maxDepth         = 50;
+    camera.m_vfov     = 20;
+    camera.m_lookFrom = point3(13,2,3);
+    camera.m_lookAt   = point3(0,0,0);
+    camera.m_up      = Vec3(0,1,0);
 }
 
 inline void randomScene(HittableList &objects, Camera &camera)

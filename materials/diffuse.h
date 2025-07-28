@@ -1,7 +1,7 @@
 #ifndef DIFFUSE_H
 #define DIFFUSE_H
 #include "material.h"
-#include "../textures/solid.h"
+#include "../textures/solid_texture.h"
 #include "../textures/texture.h"
 
 class DiffuseMaterial : public Material
