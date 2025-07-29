@@ -2,6 +2,7 @@
 #define SCENE_H
 
 #include "../hittable/hittable_list.h"
+#include "../hittable/quad.h"
 #include "camera.h"
 #include "../materials/dielectric.h"
 #include "../materials/diffuse.h"
@@ -13,15 +14,15 @@
 
 inline void earth(HittableList &objects, Camera &camera)
 {
-    auto earthTexture {std::make_shared<ImageTexture>("earthmap.jpg")};
-    auto earthSurface {std::make_shared<DiffuseMaterial>(earthTexture)};
-    auto earthSphere {std::make_shared<Sphere>(point3{0,0,-1},2,earthSurface)};
+    auto earthTexture{std::make_shared<ImageTexture>("earthmap.jpg")};
+    auto earthSurface{std::make_shared<DiffuseMaterial>(earthTexture)};
+    auto earthSphere{std::make_shared<Sphere>(point3{0, 0, -1}, 2, earthSurface)};
     objects.add(earthSphere);
 
     camera.m_aspectRatio = 16.0 / 9.0;
     camera.m_imageWidth = 400;
-    camera.m_samples = 100;
-    camera.m_maxDepth = 50;
+    camera.m_samples = 10;
+    camera.m_maxDepth = 10;
     camera.m_vfov = 20;
     camera.m_lookFrom = point3(0, 0, 12);
     camera.m_lookAt = point3(0, 0, 0);
@@ -31,17 +32,17 @@ inline void earth(HittableList &objects, Camera &camera)
 inline void perlin(HittableList &objects, Camera &camera)
 {
     auto perlinTexture = std::make_shared<NoiseTexture>(8);
-    objects.add(std::make_shared<Sphere>(point3(0,-1000,0), 1000, std::make_shared<DiffuseMaterial>(perlinTexture)));
-    objects.add(std::make_shared<Sphere>(point3(0,2,0), 2, std::make_shared<DiffuseMaterial>(perlinTexture)));
+    objects.add(std::make_shared<Sphere>(point3(0, -1000, 0), 1000, std::make_shared<DiffuseMaterial>(perlinTexture)));
+    objects.add(std::make_shared<Sphere>(point3(0, 2, 0), 2, std::make_shared<DiffuseMaterial>(perlinTexture)));
 
-    camera.m_aspectRatio      = 16.0 / 9.0;
-    camera.m_imageWidth       = 400;
-    camera.m_samples = 100;
-    camera.m_maxDepth         = 50;
-    camera.m_vfov     = 20;
-    camera.m_lookFrom = point3(13,2,3);
-    camera.m_lookAt   = point3(0,0,0);
-    camera.m_up      = Vec3(0,1,0);
+    camera.m_aspectRatio = 16.0 / 9.0;
+    camera.m_imageWidth = 400;
+    camera.m_samples = 10;
+    camera.m_maxDepth = 10;
+    camera.m_vfov = 20;
+    camera.m_lookFrom = point3(13, 2, 3);
+    camera.m_lookAt = point3(0, 0, 0);
+    camera.m_up = Vec3(0, 1, 0);
 }
 
 inline void randomScene(HittableList &objects, Camera &camera)
@@ -89,6 +90,32 @@ inline void randomScene(HittableList &objects, Camera &camera)
         camera.m_lookAt = point3(0, 0, -1);
         camera.m_up = Vec3(0, 1, 0);
     }
+}
+
+inline void quads(HittableList &objects, Camera &camera)
+{
+    // Materials
+    auto left_red = std::make_shared<DiffuseMaterial>(color(1.0, 0.2, 0.2));
+    auto back_green = std::make_shared<DiffuseMaterial>(color(0.2, 1.0, 0.2));
+    auto right_blue = std::make_shared<DiffuseMaterial>(color(0.2, 0.2, 1.0));
+    auto upper_orange = std::make_shared<DiffuseMaterial>(color(1.0, 0.5, 0.0));
+    auto lower_teal = std::make_shared<DiffuseMaterial>(color(0.2, 0.8, 0.8));
+
+    // Quads
+    objects.add(std::make_shared<Quadrilateral>(point3(-3, -2, 5), Vec3(0, 0, -4), Vec3(0, 4, 0), left_red));
+    objects.add(std::make_shared<Quadrilateral>(point3(-2, -2, 0), Vec3(4, 0, 0), Vec3(0, 4, 0), back_green));
+    objects.add(std::make_shared<Quadrilateral>(point3(3, -2, 1), Vec3(0, 0, 4), Vec3(0, 4, 0), right_blue));
+    objects.add(std::make_shared<Quadrilateral>(point3(-2, 3, 1), Vec3(4, 0, 0), Vec3(0, 0, 4), upper_orange));
+    objects.add(std::make_shared<Quadrilateral>(point3(-2, -3, 5), Vec3(4, 0, 0), Vec3(0, 0, -4), lower_teal));
+
+    camera.m_aspectRatio = 1.0;
+    camera.m_imageWidth = 400;
+    camera.m_samples = 100;
+    camera.m_maxDepth = 50;
+    camera.m_vfov = 80;
+    camera.m_lookFrom = point3(0, 0, 9);
+    camera.m_lookAt = point3(0, 0, 0);
+    camera.m_up = Vec3(0, 1, 0);
 }
 
 #endif //SCENE_H

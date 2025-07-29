@@ -37,6 +37,9 @@ add_executable(ray_tracer_cpp main.cpp
         utility/perlin.h
         utility/perlin.cpp
         textures/noise_texture.h
+        hittable/quad.h
+        hittable/quad.cpp
+        hittable/triangle.h
 )
 
 include(FetchContent)
