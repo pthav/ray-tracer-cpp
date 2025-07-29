@@ -5,6 +5,7 @@
 #include "../utility/aabb.h"
 #include "../vector/ray.h"
 #include "../vector/vector.h"
+#include "../vector/color.h"
 
 class Material;
 

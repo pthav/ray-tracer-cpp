@@ -57,7 +57,7 @@ color Camera::rayColor(const ray &r, const HittableList &objects, int depth)
 {
     if (depth <= 0)
     {
-        return color{0, 0, 0};
+        return color{0, 0, 0}; // No more light accumulation
     }
 
     hitRecord record{};
@@ -65,16 +65,16 @@ color Camera::rayColor(const ray &r, const HittableList &objects, int depth)
     {
         ray scattered {};
         color attenuation {};
-        if (record.m_material->scatter(r, record, attenuation, scattered))
+        auto emissionColor {record.m_material->emit(record.m_u, record.m_v, record.m_intersection)};
+        if (!record.m_material->scatter(r, record, attenuation, scattered))
         {
-            return attenuation * rayColor(scattered, objects, depth - 1);
+            return emissionColor;
         }
-        return color{0,0,0};
+        auto scatterColor {attenuation * rayColor(scattered, objects, depth -1)};
+        return emissionColor + scatterColor;
     }
 
-    Vec3 unit_direction = normalize(r.getDirection());
-    auto a = 0.5 * (unit_direction[1] + 1.0);
-    return (1.0 - a) * color{1.0, 1.0, 1.0} + a * color{0.5, 0.7, 1.0};
+    return m_background; // No hit so background
 }
 
 
@@ -95,7 +95,7 @@ void Camera::render(const HittableList &objects)
                 ray pixelRay{generateRay(pixelCenter)};
                 accumulated += rayColor(pixelRay, objects, m_maxDepth);
             }
-            write_color(out, accumulated / m_samples);
+            writeColor(out, accumulated / m_samples);
         }
     }
 }

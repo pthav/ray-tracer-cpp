@@ -12,12 +12,13 @@ int main()
     Camera camera{};
 
     // Choose scene
-    switch (4)
+    switch (5)
     {
         case 1: randomScene(objects, camera); break;
         case 2: earth(objects, camera); break;
         case 3: perlin(objects, camera); break;
         case 4: quads(objects, camera); break;
+        case 5: lights(objects, camera); break;
     }
 
     auto before{std::chrono::high_resolution_clock::now()};

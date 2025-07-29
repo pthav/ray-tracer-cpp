@@ -21,7 +21,7 @@ private:
 
     [[nodiscard]] ray generateRay(const point3 &pixel) const ;
 
-    static color rayColor(const ray &r, const HittableList &objects, int depth);
+    color rayColor(const ray &r, const HittableList &objects, int depth);
 
 public:
     int m_imageWidth{400};
@@ -32,6 +32,7 @@ public:
     Vec3 m_lookAt{0,0,-1};
     Vec3 m_lookFrom{0,0,0};
     Vec3 m_up{0,1,0};
+    color m_background{0.5,0.7,1.0};
 
     Camera() = default;
 

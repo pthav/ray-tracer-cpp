@@ -1,4 +1,4 @@
-#include "quad.h"
+#include "quadrilateral.h"
 
 [[nodiscard]] bool Quadrilateral::isInside(double a, double b, hitRecord &rec) const
 {

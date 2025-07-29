@@ -1,7 +1,8 @@
 #ifndef COLOR_H
 #define COLOR_H
-#include "vector.h"
 #include <iostream>
+#include "vector.h"
+#include "../utility/interval.h"
 
 using color = Vec3;
 
@@ -14,7 +15,7 @@ inline double linearToGamma(double c)
     return 0;
 }
 
-inline void write_color(std::ostream &out, const color &pixelColor)
+inline void writeColor(std::ostream &out, const color &pixelColor)
 {
     // Gamma correction
     auto r {linearToGamma(pixelColor[0])};
@@ -25,9 +26,10 @@ inline void write_color(std::ostream &out, const color &pixelColor)
     // auto b {pixelColor[2]};
 
     // Translate from [0,1] to [0,255].
-    int rbyte = static_cast<int>(255.999 * r);
-    int gbyte = static_cast<int>(255.999 * g);
-    int bbyte = static_cast<int>(255.999 * b);
+    static const Interval intensity {0,0.9999};
+    int rbyte = static_cast<int>(256 * intensity.clamp(r));
+    int gbyte = static_cast<int>(256 * intensity.clamp(g));
+    int bbyte = static_cast<int>(256 * intensity.clamp(b));
 
     out << rbyte << ' ' << gbyte << ' ' << bbyte << '\n';
 }
