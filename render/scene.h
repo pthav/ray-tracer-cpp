@@ -1,16 +1,16 @@
 #ifndef SCENE_H
 #define SCENE_H
 
-#include "../Hittable/Hittable_list.h"
-#include "../Hittable/quadrilateral.h"
+#include "../hittable/hittable.h"
+#include "../hittable/quadrilateral.h"
 #include "camera.h"
 #include "../hittable/constant_medium.h"
-#include "../Hittable/instance.h"
+#include "../hittable/instance.h"
 #include "../materials/dielectric.h"
 #include "../materials/diffuse.h"
 #include "../materials/metal.h"
 #include "../utility/random.h"
-#include "../Hittable/sphere.h"
+#include "../hittable/sphere.h"
 #include "../materials/diffuse_light.h"
 #include "../textures/image_texture.h"
 #include "../textures/noise_texture.h"
@@ -274,8 +274,8 @@ inline void finalScene(HittableList &objects, Camera &camera)
     objects.add(std::make_shared<Instance>(std::make_shared<BVH>(boxes2), Vec3{-100,270,395}, Vec3{0,15,0}));
 
     camera.m_aspectRatio = 1.0;
-    camera.m_imageWidth = 200;
-    camera.m_samples = 1000;
+    camera.m_imageWidth = 600;
+    camera.m_samples = 5000;
     camera.m_maxDepth = 40;
     camera.m_background = color(0, 0, 0);
     camera.m_vfov = 40;
