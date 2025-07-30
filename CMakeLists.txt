@@ -42,6 +42,9 @@ add_executable(ray_tracer_cpp main.cpp
         hittable/triangle.h
         materials/diffuse_light.h
         hittable/instance.h
+        hittable/constant_medium.h
+        hittable/instance.cpp
+        materials/Isotropic.h
 )
 
 include(FetchContent)

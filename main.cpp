@@ -12,7 +12,7 @@ int main()
     Camera camera{};
 
     // Choose scene
-    switch (6)
+    switch (7)
     {
         case 1: randomScene(objects, camera); break;
         case 2: earth(objects, camera); break;
@@ -20,6 +20,7 @@ int main()
         case 4: quads(objects, camera); break;
         case 5: lights(objects, camera); break;
         case 6: cornellBox(objects, camera); break;
+        case 7: cornellSmoke(objects, camera); break;
     }
 
     // Time BVH construction

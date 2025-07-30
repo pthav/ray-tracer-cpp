@@ -1,15 +1,16 @@
 #ifndef SCENE_H
 #define SCENE_H
 
-#include "../hittable/hittable_list.h"
-#include "../hittable/quadrilateral.h"
+#include "../Hittable/Hittable_list.h"
+#include "../Hittable/quadrilateral.h"
 #include "camera.h"
-#include "../hittable/instance.h"
+#include "../hittable/constant_medium.h"
+#include "../Hittable/instance.h"
 #include "../materials/dielectric.h"
 #include "../materials/diffuse.h"
 #include "../materials/metal.h"
 #include "../utility/random.h"
-#include "../hittable/sphere.h"
+#include "../Hittable/sphere.h"
 #include "../materials/diffuse_light.h"
 #include "../textures/image_texture.h"
 #include "../textures/noise_texture.h"
@@ -162,17 +163,51 @@ inline void cornellBox(HittableList &objects, Camera &camera)
     objects.add(make_shared<Quadrilateral>(point3(0, 0, 555), Vec3(555, 0, 0), Vec3(0, 555, 0), white));
 
     std::shared_ptr<Hittable> box1 = box(point3(0, 0, 0), point3(165, 330, 165), white);
-    box1 = std::make_shared<Instance>(box1, Vec3(265,0,295), Vec3(0, 15, 0));
+    box1 = std::make_shared<Instance>(box1, Vec3(265, 0, 295), Vec3(0, 15, 0));
     objects.add(box1);
 
     std::shared_ptr<Hittable> box2 = box(point3(0, 0, 0), point3(165, 165, 165), white);
-    box2 = std::make_shared<Instance>(box2, Vec3(130,0,65), Vec3(0, -18, 0), Vec3(0.5,1.0,0.5));
+    box2 = std::make_shared<Instance>(box2, Vec3(130, 0, 65), Vec3(0, -18, 0), Vec3(0.5, 1.0, 0.5));
     objects.add(box2);
 
     camera.m_aspectRatio = 1.0;
     camera.m_imageWidth = 400;
     camera.m_samples = 50;
     camera.m_maxDepth = 10;
+    camera.m_background = color(0, 0, 0);
+    camera.m_vfov = 40;
+    camera.m_lookFrom = point3(278, 278, -800);
+    camera.m_lookAt = point3(278, 278, 0);
+    camera.m_up = Vec3(0, 1, 0);
+}
+
+inline void cornellSmoke(HittableList &objects, Camera &camera)
+{
+    auto red = std::make_shared<DiffuseMaterial>(color(.65, .05, .05));
+    auto white = std::make_shared<DiffuseMaterial>(color(.73, .73, .73));
+    auto green = std::make_shared<DiffuseMaterial>(color(.12, .45, .15));
+    auto light = std::make_shared<DiffuseLight>(color(7, 7, 7));
+
+    objects.add(make_shared<Quadrilateral>(point3(555, 0, 0), Vec3(0, 555, 0), Vec3(0, 0, 555), green));
+    objects.add(make_shared<Quadrilateral>(point3(0, 0, 0), Vec3(0, 555, 0), Vec3(0, 0, 555), red));
+    objects.add(make_shared<Quadrilateral>(point3(113,554,127), Vec3(330,0,0), Vec3(0,0,305), light));
+    objects.add(make_shared<Quadrilateral>(point3(0, 0, 0), Vec3(555, 0, 0), Vec3(0, 0, 555), white));
+    objects.add(make_shared<Quadrilateral>(point3(555, 555, 555), Vec3(-555, 0, 0), Vec3(0, 0, -555), white));
+    objects.add(make_shared<Quadrilateral>(point3(0, 0, 555), Vec3(555, 0, 0), Vec3(0, 555, 0), white));
+
+    std::shared_ptr<Hittable> box1 = box(point3(0, 0, 0), point3(165, 330, 165), white);
+    box1 = std::make_shared<Instance>(box1, Vec3(265, 0, 295), Vec3(0, 15, 0));
+
+    std::shared_ptr<Hittable> box2 = box(point3(0, 0, 0), point3(165, 165, 165), white);
+    box2 = std::make_shared<Instance>(box2, Vec3(130, 0, 65), Vec3(0, -18, 0));
+
+    objects.add(make_shared<ConstantMedium>(box1, 0.01, color(0, 0, 0)));
+    objects.add(make_shared<ConstantMedium>(box2, 0.01, color(1, 1, 1)));
+
+    camera.m_aspectRatio = 1.0;
+    camera.m_imageWidth = 600;
+    camera.m_samples = 200;
+    camera.m_maxDepth = 50;
     camera.m_background = color(0, 0, 0);
     camera.m_vfov = 40;
     camera.m_lookFrom = point3(278, 278, -800);
