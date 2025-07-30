@@ -1,6 +1,7 @@
 #ifndef INTERVAL_H
 #define INTERVAL_H
 #include <limits>
+#include "../vector/vector.h"
 
 class Interval
 {
@@ -20,6 +21,17 @@ public:
     Interval(const Interval &a, const Interval &b)
         : m_min{a.m_min <= b.m_min ? a.m_min : b.m_min},
           m_max{a.m_max >= b.m_max ? a.m_max : b.m_max}
+    {
+    }
+
+    Interval(const Interval &a, double b)
+    : m_min{a.m_min <= b ? a.m_min : b},
+      m_max{a.m_max >= b ? a.m_max : b}
+    {
+    }
+
+    Interval(double b, const Interval &a)
+        : Interval(a,b)
     {
     }
 

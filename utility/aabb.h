@@ -33,6 +33,18 @@ public:
         m_z = Interval(box0.m_z, box1.m_z);
     }
 
+    AABB(const AABB &box, const point3 &point)
+    {
+        m_x = Interval(box.m_x,point[0]);
+        m_y = Interval(box.m_y,point[1]);
+        m_z = Interval(box.m_z,point[2]);
+    }
+
+    AABB(const point3 &point, const AABB &box)
+        : AABB(box, point)
+    {
+    }
+
     [[nodiscard]] const Interval &axisInterval(int n) const
     {
         if (n == 1) return m_y;
