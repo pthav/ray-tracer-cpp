@@ -7,8 +7,8 @@
 
 struct tile
 {
-    int m_row;
-    int m_col;
+    int m_row{};
+    int m_col{};
 };
 
 class Camera
@@ -42,7 +42,7 @@ private:
 
     [[nodiscard]] ray generateRay(const point3 &pixel) const;
 
-    color rayColor(const ray &r, const HittableList &objects, int depth);
+    color rayColor(const ray &r, const HittableList &objects, int depth) const;
 };
 
 #endif //CAMERA_H

@@ -14,11 +14,11 @@ void Camera::initialize()
 
     // Camera settings
     auto focalLength{(m_lookFrom - m_lookAt).length()};
-    auto theta {(M_PI / 180.0) * m_vfov};
-    auto h {std::tan(theta/2)};
+    auto theta{(M_PI / 180.0) * m_vfov};
+    auto h{std::tan(theta / 2)};
     auto viewportHeight{2.0 * h * focalLength};
     auto viewportWidth{viewportHeight * (static_cast<double>(m_imageWidth) / m_imageHeight)};
-    auto cameraCenter {m_lookFrom};
+    auto cameraCenter{m_lookFrom};
 
     // Camera orthonormal basis
     m_w = normalize(m_lookFrom - m_lookAt);
@@ -54,28 +54,45 @@ ray Camera::generateRay(const point3 &pixel) const
     return randomRay;
 }
 
-color Camera::rayColor(const ray &r, const HittableList &objects, int depth)
+color Camera::rayColor(const ray &r, const HittableList &objects, int maxDepth) const
 {
-    if (depth <= 0)
+    int currentDepth = maxDepth;
+    ray currentRay{r};
+    color currentAttenuation{1, 1, 1};
+    color result{0, 0, 0};
+    while (true)
     {
-        return color{0, 0, 0}; // No more light accumulation
-    }
-
-    hitRecord record{};
-    if (objects.hit(r, Interval{0.001, std::numeric_limits<double>::infinity()}, record))
-    {
-        ray scattered {};
-        color attenuation {};
-        auto emissionColor {record.m_material->emit(record.m_u, record.m_v, record.m_intersection)};
-        if (!record.m_material->scatter(r, record, attenuation, scattered))
+        if (currentDepth == 0)
         {
-            return emissionColor;
+            break;
         }
-        auto scatterColor {attenuation * rayColor(scattered, objects, depth -1)};
-        return emissionColor + scatterColor;
+
+        hitRecord record{};
+        if (objects.hit(currentRay, Interval{0.001, std::numeric_limits<double>::infinity()}, record))
+        {
+            ray scattered{};
+            color attenuation{};
+            auto emissionColor{record.m_material->emit(record.m_u, record.m_v, record.m_intersection)};
+
+            if (!record.m_material->scatter(currentRay, record, attenuation, scattered))
+            {
+                result += currentAttenuation * emissionColor; // Didn't scatter
+                break;
+            }
+
+            currentRay = scattered;
+            result += currentAttenuation * emissionColor;
+            currentAttenuation = currentAttenuation * attenuation;
+        } else
+        {
+            result += currentAttenuation * m_background; // No hit so background
+            break;
+        }
+
+        currentDepth--;
     }
 
-    return m_background; // No hit so background
+    return result;
 }
 
 void Camera::render(const HittableList &objects)
@@ -83,25 +100,25 @@ void Camera::render(const HittableList &objects)
     initialize();
 
     // Create all tiles
-    int tileDimension {64};
-    int tilesWide {(m_imageWidth / tileDimension) + 1};
-    int tilesHigh {(static_cast<int>(m_imageHeight / tileDimension)) + 1};
-    int numTiles {tilesWide * tilesHigh};
-    tile tileCenters [numTiles];
+    int tileDimension{64};
+    int tilesWide{(m_imageWidth / tileDimension) + 1};
+    int tilesHigh{(static_cast<int>(m_imageHeight / tileDimension)) + 1};
+    int numTiles{tilesWide * tilesHigh};
+    tile tileCenters[numTiles];
     for (int tileY = 0; tileY < tilesHigh; tileY++)
     {
         for (int tileX = 0; tileX < tilesWide; tileX++)
         {
             int row = tileY * tileDimension;
             int col = tileX * tileDimension;
-            tileCenters[tileY * tilesWide + tileX] = tile{row,col};
+            tileCenters[tileY * tilesWide + tileX] = tile{row, col};
         }
     }
 
     // Create all threads
     std::vector<color> outputColor{static_cast<size_t>(m_imageHeight) * m_imageWidth};
-    std::atomic nextTile {0};
-    size_t numThreads {std::thread::hardware_concurrency()};
+    std::atomic nextTile{0};
+    size_t numThreads{std::thread::hardware_concurrency()};
     std::vector<std::thread> threads;
 
     for (int i = 0; i < numThreads; i++)
@@ -138,7 +155,7 @@ void Camera::render(const HittableList &objects)
         threads.emplace_back(worker);
     }
 
-    for (auto& thread : threads)
+    for (auto &thread: threads)
     {
         thread.join();
     }
