@@ -5,9 +5,6 @@
 
 class Random
 {
-private:
-    static std::mt19937 m_gen;
-    static std::uniform_real_distribution<double> m_double;
 public:
     static double randomDouble()
     {
@@ -18,6 +15,9 @@ public:
     {
         return std::uniform_int_distribution<int>(start,end)(m_gen);
     }
+private:
+    static std::mt19937 m_gen;
+    static std::uniform_real_distribution<double> m_double;
 };
 
 inline std::mt19937 Random::m_gen{

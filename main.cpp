@@ -12,7 +12,7 @@ int main()
     Camera camera{};
 
     // Choose scene
-    switch (1)
+    switch (3)
     {
         case 1: randomScene(objects, camera); break;
         case 2: earth(objects, camera); break;

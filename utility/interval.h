@@ -8,60 +8,25 @@ class Interval
 public:
     double m_min, m_max;
 
-    Interval()
-        : m_min{+std::numeric_limits<double>::infinity()},
-          m_max{-std::numeric_limits<double>::infinity()}
-    {
-    }
+    Interval();
 
-    Interval(double min, double max) : m_min{min}, m_max{max}
-    {
-    }
+    Interval(double min, double max);
 
-    Interval(const Interval &a, const Interval &b)
-        : m_min{a.m_min <= b.m_min ? a.m_min : b.m_min},
-          m_max{a.m_max >= b.m_max ? a.m_max : b.m_max}
-    {
-    }
+    Interval(const Interval &a, const Interval &b);
 
-    Interval(const Interval &a, double b)
-    : m_min{a.m_min <= b ? a.m_min : b},
-      m_max{a.m_max >= b ? a.m_max : b}
-    {
-    }
+    Interval(const Interval &a, double b);
 
-    Interval(double b, const Interval &a)
-        : Interval(a,b)
-    {
-    }
+    Interval(double b, const Interval &a);
 
-    [[nodiscard]] double size() const
-    {
-        return m_max - m_min;
-    }
+    [[nodiscard]] double size() const;
 
-    [[nodiscard]] bool contains(double x) const
-    {
-        return m_min <= x && x <= m_max;
-    }
+    [[nodiscard]] bool contains(double x) const;
 
-    [[nodiscard]] bool surrounds(double x) const
-    {
-        return m_min < x && x < m_max;
-    }
+    [[nodiscard]] bool surrounds(double x) const;
 
-    [[nodiscard]] double clamp(double x) const
-    {
-        if (x < m_min) return m_min;
-        if (x > m_max) return m_max;
-        return x;
-    }
+    [[nodiscard]] double clamp(double x) const;
 
-    [[nodiscard]] Interval expand(double delta) const
-    {
-        auto padding = delta / 2;
-        return {m_min - padding, m_max + padding};
-    }
+    [[nodiscard]] Interval expand(double delta) const;
 
     static const Interval empty, universe;
 };
