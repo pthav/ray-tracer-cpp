@@ -3,13 +3,13 @@
 ConstantMedium::ConstantMedium(const std::shared_ptr<Hittable> &boundary, double density,
                                const std::shared_ptr<Texture> &tex)
     : boundary(boundary), negInvDensity(-1 / density),
-      phaseFunction(std::make_shared<Isotropic>(tex))
+      phaseFunction(std::make_shared<isotropic>(tex))
 {
 }
 
 ConstantMedium::ConstantMedium(const std::shared_ptr<Hittable> &boundary, double density, const color &albedo)
     : boundary(boundary), negInvDensity(-1 / density),
-      phaseFunction(std::make_shared<Isotropic>(albedo))
+      phaseFunction(std::make_shared<isotropic>(albedo))
 {
 }
 

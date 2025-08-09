@@ -9,9 +9,7 @@ private:
     double m_v[3]{};
 
 public:
-    explicit Vec3(double x = 0, double y = 0, double z = 0) : m_v{x, y, z}
-    {
-    }
+    explicit Vec3(double x = 0, double y = 0, double z = 0);
 
     const double &operator[](int i) const;
 
@@ -54,13 +52,14 @@ public:
 
 inline Vec3 reflect(const Vec3 &in, const Vec3 &n)
 {
-    auto reflection {in - n * 2 * dot(in,n)};
+    auto reflection{in - n * 2 * dot(in, n)};
     return normalize(reflection);
 }
 
-inline Vec3 refract(const Vec3& in, const Vec3& n, double refractiveRatio) {
+inline Vec3 refract(const Vec3 &in, const Vec3 &n, double refractiveRatio)
+{
     auto cosTheta = std::fmin(dot(-in, n), 1.0);
-    Vec3 rOutPerp =  refractiveRatio * (in + cosTheta*n);
+    Vec3 rOutPerp = refractiveRatio * (in + cosTheta * n);
     Vec3 rOutParallel = -std::sqrt(std::fabs(1.0 - rOutPerp.lengthSquared())) * n;
     return rOutPerp + rOutParallel;
 }

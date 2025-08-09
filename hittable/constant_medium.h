@@ -2,7 +2,7 @@
 #define CONSTANT_MEDIUM_H
 
 #include "hittable.h"
-#include "../materials/Isotropic.h"
+#include "../materials/isotropic.h"
 #include "../textures/texture.h"
 #include "../utility/random.h"
 

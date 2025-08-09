@@ -274,8 +274,8 @@ inline void finalScene(HittableList &objects, Camera &camera)
     objects.add(std::make_shared<Instance>(std::make_shared<BVH>(boxes2), Vec3{-100,270,395}, Vec3{0,15,0}));
 
     camera.m_aspectRatio = 1.0;
-    camera.m_imageWidth = 600;
-    camera.m_samples = 5000;
+    camera.m_imageWidth = 400;
+    camera.m_samples = 50;
     camera.m_maxDepth = 40;
     camera.m_background = color(0, 0, 0);
     camera.m_vfov = 40;

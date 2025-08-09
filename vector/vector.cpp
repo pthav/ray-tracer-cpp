@@ -4,6 +4,10 @@
 #include <iterator>
 #include <iostream>
 
+Vec3::Vec3(double x, double y, double z) : m_v{x, y, z}
+{
+}
+
 const double &Vec3::operator[](int i) const
 {
     return m_v[i];

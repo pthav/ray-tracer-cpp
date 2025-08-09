@@ -44,7 +44,7 @@ add_executable(ray_tracer_cpp main.cpp
         hittable/instance.h
         hittable/constant_medium.h
         hittable/instance.cpp
-        materials/Isotropic.h
+        materials/isotropic.h
         hittable/constant_medium.cpp
         utility/interval.cpp
 )
