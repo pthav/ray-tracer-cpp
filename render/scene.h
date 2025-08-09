@@ -205,9 +205,9 @@ inline void cornellSmoke(HittableList &objects, Camera &camera)
     objects.add(std::make_shared<ConstantMedium>(box2, 0.01, color(1, 1, 1)));
 
     camera.m_aspectRatio = 1.0;
-    camera.m_imageWidth = 600;
-    camera.m_samples = 200;
-    camera.m_maxDepth = 50;
+    camera.m_imageWidth = 400;
+    camera.m_samples = 50;
+    camera.m_maxDepth = 40;
     camera.m_background = color(0, 0, 0);
     camera.m_vfov = 40;
     camera.m_lookFrom = point3(278, 278, -800);

@@ -1,5 +1,9 @@
 #include "hittable_list.h"
 
+HittableList::HittableList(std::vector<std::shared_ptr<Hittable> > objects) : m_objects{std::move(objects)}
+{
+}
+
 void HittableList::add(const std::shared_ptr<Hittable> &object)
 {
     m_objects.push_back(object);
@@ -25,4 +29,14 @@ bool HittableList::hit(const ray &r, Interval rayT, hitRecord &rec) const
     }
 
     return hitAny;
+}
+
+[[nodiscard]] AABB HittableList::boundingBox() const
+{
+    return m_boundingBox;
+}
+
+std::vector<std::shared_ptr<Hittable> > &HittableList::getObjects()
+{
+    return m_objects;
 }

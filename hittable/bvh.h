@@ -41,7 +41,8 @@ public:
             m_right = objects[start + 1];
         } else
         {
-            std::sort(std::begin(objects) + static_cast<int>(start), std::begin(objects) + static_cast<int>(end), comparator);
+            std::sort(std::begin(objects) + static_cast<int>(start), std::begin(objects) + static_cast<int>(end),
+                      comparator);
 
             auto mid = start + object_span / 2;
             m_left = make_shared<BVH>(objects, start, mid);

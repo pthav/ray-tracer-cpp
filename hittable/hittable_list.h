@@ -2,7 +2,6 @@
 #define HITTABLE_LIST_H
 
 #include <memory>
-#include <utility>
 #include <vector>
 
 #include "hittable.h"
@@ -11,28 +10,20 @@ class HittableList : public Hittable
 {
 private:
     std::vector<std::shared_ptr<Hittable> > m_objects{};
-    AABB m_boundingBox {};
+    AABB m_boundingBox{};
 
 public:
     HittableList() = default;
 
-    explicit HittableList(std::vector<std::shared_ptr<Hittable> > objects) : m_objects{std::move(objects)}
-    {
-    }
+    explicit HittableList(std::vector<std::shared_ptr<Hittable> > objects);
 
     void add(const std::shared_ptr<Hittable> &object);
 
     bool hit(const ray &r, Interval rayT, hitRecord &rec) const override;
 
-    [[nodiscard]] AABB boundingBox() const override
-    {
-        return m_boundingBox;
-    }
+    [[nodiscard]] AABB boundingBox() const override;
 
-    std::vector<std::shared_ptr<Hittable>> &getObjects()
-    {
-        return m_objects;
-    }
+    std::vector<std::shared_ptr<Hittable> > &getObjects();
 };
 
 #endif //HITTABLE_LIST_H

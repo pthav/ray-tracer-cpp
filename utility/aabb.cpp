@@ -1,5 +1,57 @@
 #include "aabb.h"
 
+AABB::AABB() = default;
+
+AABB::AABB(const Interval &x, const Interval &y, const Interval &z)
+    : m_x{x}, m_y{y}, m_z{z}
+{
+    padToMinimums();
+}
+
+AABB::AABB(const point3 &a, const point3 &b)
+{
+    m_x = (a[0] <= b[0]) ? Interval(a[0], b[0]) : Interval(b[0], a[0]);
+    m_y = (a[1] <= b[1]) ? Interval(a[1], b[1]) : Interval(b[1], a[1]);
+    m_z = (a[2] <= b[2]) ? Interval(a[2], b[2]) : Interval(b[2], a[2]);
+
+    padToMinimums();
+}
+
+AABB::AABB(const AABB &box0, const AABB &box1)
+{
+    m_x = Interval(box0.m_x, box1.m_x);
+    m_y = Interval(box0.m_y, box1.m_y);
+    m_z = Interval(box0.m_z, box1.m_z);
+}
+
+AABB::AABB(const AABB &box, const point3 &point)
+{
+    m_x = Interval(box.m_x,point[0]);
+    m_y = Interval(box.m_y,point[1]);
+    m_z = Interval(box.m_z,point[2]);
+}
+
+AABB::AABB(const point3 &point, const AABB &box)
+    : AABB(box, point)
+{
+}
+
+[[nodiscard]] const Interval &AABB::axisInterval(int n) const
+{
+    if (n == 1) return m_y;
+    if (n == 2) return m_z;
+    return m_x;
+}
+
+[[nodiscard]] int AABB::longestAxis() const
+{
+    // Returns the index of the longest axis of the bounding box.
+
+    if (m_x.size() > m_y.size())
+        return m_x.size() > m_z.size() ? 0 : 2;
+    return m_y.size() > m_z.size() ? 1 : 2;
+}
+
 bool AABB::hit(const ray& r, Interval rayT) const {
     const point3& rayO = r.getOrigin();
     const Vec3&   rayInverseDir  = r.getInverseDirection();
@@ -18,14 +70,6 @@ bool AABB::hit(const ray& r, Interval rayT) const {
         rayT.m_min = std::max(t0,rayT.m_min);
         rayT.m_max = std::min(t1,rayT.m_max);
 
-        // if (t0 < t1) {
-        //     if (t0 > ray_t.m_min) ray_t.m_min = t0;
-        //     if (t1 < ray_t.m_max) ray_t.m_max = t1;
-        // } else {
-        //     if (t1 > ray_t.m_min) ray_t.m_min = t1;
-        //     if (t0 < ray_t.m_max) ray_t.m_max = t0;
-        // }
-
         if (rayT.m_max <= rayT.m_min)
         {
             return false;
@@ -34,23 +78,10 @@ bool AABB::hit(const ray& r, Interval rayT) const {
     return true;
 }
 
-// auto rd{r.getInverseDirection()};
-// auto ro{r.getOrigin()};
-// auto tx1 {(m_x.m_start - ro[0]) * rd[0]};
-// auto tx2 {(m_x.m_end - ro[0]) * rd[0]};
-// auto tMin{std::min(tx1,tx2)};
-// auto tMax{std::max(tx1,tx2)};
-// auto ty1 {(m_y.m_start - ro[1]) * rd[1]};
-// auto ty2 {(m_y.m_end - ro[1]) * rd[1]};
-// tMin = std::min(tMin, std::min(ty1,ty2));
-// tMax = std::max(tMax, std::max(ty1,ty2));
-// auto tz1 {(m_z.m_start - ro[2]) * rd[2]};
-// auto tz2 {(m_z.m_end - ro[2]) * rd[2]};
-// tMin = std::min(tMin, std::min(tz1,tz2));
-// tMax = std::max(tMax, std::max(tz1,tz2));
-//
-// if (tMax >= tMin && tMin < 0.001 && tMax > 0)
-// {
-//     return tMin;
-// }
-// return 1e30f;
+void AABB::padToMinimums()
+{
+    double delta = 0.0001;
+    if (m_x.size() < delta) m_x = m_x.expand(delta);
+    if (m_y.size() < delta) m_y = m_y.expand(delta);
+    if (m_z.size() < delta) m_z = m_z.expand(delta);
+}
