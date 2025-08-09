@@ -5,6 +5,12 @@
 #include "../hittable/hittable_list.h"
 #include "../vector/color.h"
 
+struct tile
+{
+    int m_row;
+    int m_col;
+};
+
 class Camera
 {
 public:

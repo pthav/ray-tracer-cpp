@@ -2,6 +2,7 @@
 
 #include <fstream>
 #include <limits>
+#include <thread>
 
 #include "../utility/random.h"
 
@@ -77,10 +78,70 @@ color Camera::rayColor(const ray &r, const HittableList &objects, int depth)
     return m_background; // No hit so background
 }
 
-
 void Camera::render(const HittableList &objects)
 {
     initialize();
+
+    // Create all tiles
+    int tileDimension {64};
+    int tilesWide {(m_imageWidth / tileDimension) + 1};
+    int tilesHigh {(static_cast<int>(m_imageHeight / tileDimension)) + 1};
+    int numTiles {tilesWide * tilesHigh};
+    tile tileCenters [numTiles];
+    for (int tileY = 0; tileY < tilesHigh; tileY++)
+    {
+        for (int tileX = 0; tileX < tilesWide; tileX++)
+        {
+            int row = tileY * tileDimension;
+            int col = tileX * tileDimension;
+            tileCenters[tileY * tilesWide + tileX] = tile{row,col};
+        }
+    }
+
+    // Create all threads
+    std::vector<color> outputColor{static_cast<size_t>(m_imageHeight) * m_imageWidth};
+    std::atomic nextTile {0};
+    size_t numThreads {std::thread::hardware_concurrency()};
+    std::vector<std::thread> threads;
+
+    for (int i = 0; i < numThreads; i++)
+    {
+        auto worker = [&]()
+        {
+            while (true)
+            {
+                // Render each tile
+                int tileIndex = nextTile.fetch_add(1);
+                if (tileIndex >= numTiles)
+                {
+                    break;
+                }
+
+                tile tile = tileCenters[tileIndex];
+                for (int row = tile.m_row; row < std::fmin(tile.m_row + tileDimension, m_imageHeight); row++)
+                {
+                    for (int col = tile.m_col; col < std::fmin(tile.m_col + tileDimension, m_imageWidth); col++)
+                    {
+                        auto pixelCenter{m_pixel00Loc + (col * m_pixelU) + (row * m_pixelV)};
+                        color accumulated{0, 0, 0};
+                        for (int s = 0; s < m_samples; s++)
+                        {
+                            ray pixelRay{generateRay(pixelCenter)};
+                            accumulated += rayColor(pixelRay, objects, m_maxDepth);
+                        }
+                        outputColor[row * m_imageWidth + col] = accumulated / m_samples;
+                    }
+                }
+            }
+        };
+
+        threads.emplace_back(worker);
+    }
+
+    for (auto& thread : threads)
+    {
+        thread.join();
+    }
 
     std::ofstream out{"image.ppm"};
     out << "P3\n" << m_imageWidth << ' ' << m_imageHeight << "\n255\n";
@@ -88,14 +149,7 @@ void Camera::render(const HittableList &objects)
     {
         for (int col = 0; col < m_imageWidth; col++)
         {
-            auto pixelCenter{m_pixel00Loc + (col * m_pixelU) + (row * m_pixelV)};
-            color accumulated{0, 0, 0};
-            for (int s = 0; s < m_samples; s++)
-            {
-                ray pixelRay{generateRay(pixelCenter)};
-                accumulated += rayColor(pixelRay, objects, m_maxDepth);
-            }
-            writeColor(out, accumulated / m_samples);
+            writeColor(out, outputColor[row * m_imageWidth + col]);
         }
     }
 }

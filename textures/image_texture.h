@@ -10,7 +10,7 @@ class ImageTexture : public Texture
 public:
     explicit ImageTexture(const char* filename) : m_image{filename}
     {
-        assert(m_image.height > 0);
+        assert(m_image.height() > 0);
     }
 
     [[nodiscard]] color value(double u, double v, const point3 &p) const override
