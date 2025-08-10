@@ -65,8 +65,11 @@ add_executable(
         tests/vector_test.cpp
         vector/vector.cpp
         tests/interval_test.cpp
+        utility/interval.cpp
         tests/aabb_test.cpp
+        utility/aabb.cpp
         tests/ray_test.cpp
+        vector/ray.h
 )
 target_link_libraries(
         my_tests
