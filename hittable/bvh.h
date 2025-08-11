@@ -63,6 +63,6 @@ private:
     static bool boxZCompare(const std::shared_ptr<Hittable> &a, const std::shared_ptr<Hittable> &b);
 };
 
-inline int BVH::m_maxLeafNodes{1};
+inline int BVH::m_maxLeafNodes{4};
 
 #endif
