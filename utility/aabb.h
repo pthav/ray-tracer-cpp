@@ -27,6 +27,10 @@ public:
 
     [[nodiscard]] int longestAxis() const;
 
+    [[nodiscard]] double surfaceArea() const;
+
+    [[nodiscard]] double centroid(int axis) const;
+
     static const AABB empty, universe;
 
 private:

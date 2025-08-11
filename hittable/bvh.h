@@ -1,6 +1,8 @@
 #ifndef BVH_H
 #define BVH_H
 
+#include <atomic>
+
 #include "../utility/aabb.h"
 #include "hittable.h"
 #include "hittable_list.h"
@@ -8,8 +10,10 @@
 struct node
 {
     AABB m_aabb{AABB::empty};
-    bool m_leaf{false};
-    size_t m_object{};
+    size_t m_left{};
+    size_t m_right{};
+    size_t m_firstPrim{};
+    int m_primCount{};
 };
 
 struct work
@@ -22,6 +26,8 @@ struct work
 class BVH : public Hittable
 {
 public:
+    static int m_maxLeafNodes;
+
     explicit BVH(HittableList list);
 
     bool hit(const ray &r, Interval rayT, hitRecord &rec) const override;
@@ -29,9 +35,22 @@ public:
     [[nodiscard]] AABB boundingBox() const override;
 
 private:
-    std::vector<std::shared_ptr<Hittable>> m_objects;
+    std::vector<std::shared_ptr<Hittable> > m_objects;
     std::vector<node> m_nodes{};
+    std::atomic<size_t> m_next{1};
     AABB m_aabb{};
+
+    [[nodiscard]] double evaluateSplit(size_t left, size_t right, int axis, double splitPos) const;
+
+    double findSplit(const AABB& subtree, size_t left, size_t right, int &axis, double &splitPos) const;
+
+    size_t partition(size_t start, size_t end, int axis, double splitPos);
+
+    size_t allocateNode();
+
+    static node makeInternal(const AABB &bounds, size_t left, size_t right);
+
+    static node makeLeaf(const AABB &bounds, size_t start, int primCount);
 
     static bool boxCompare(
         const std::shared_ptr<Hittable> &a, const std::shared_ptr<Hittable> &b, int axis_index
@@ -44,5 +63,6 @@ private:
     static bool boxZCompare(const std::shared_ptr<Hittable> &a, const std::shared_ptr<Hittable> &b);
 };
 
+inline int BVH::m_maxLeafNodes{1};
 
 #endif

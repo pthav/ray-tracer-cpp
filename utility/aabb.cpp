@@ -45,12 +45,24 @@ AABB::AABB(const point3 &point, const AABB &box)
 
 [[nodiscard]] int AABB::longestAxis() const
 {
-    // Returns the index of the longest axis of the bounding box.
-
     if (m_x.size() > m_y.size())
         return m_x.size() > m_z.size() ? 0 : 2;
     return m_y.size() > m_z.size() ? 1 : 2;
 }
+
+double AABB::centroid(int axis) const
+{
+    if (axis == 0)
+    {
+        return (m_x.m_max + m_x.m_min) / 2.0;
+    }
+    if (axis == 1)
+    {
+        return (m_y.m_max + m_y.m_min) / 2.0;
+    }
+    return (m_z.m_max + m_z.m_min) / 2.0;
+}
+
 
 bool AABB::hit(const ray& r, Interval rayT) const {
     const point3& rayO = r.getOrigin();
@@ -84,4 +96,9 @@ void AABB::padToMinimums()
     if (m_x.size() < delta) m_x = m_x.expand(delta);
     if (m_y.size() < delta) m_y = m_y.expand(delta);
     if (m_z.size() < delta) m_z = m_z.expand(delta);
+}
+
+double AABB::surfaceArea() const
+{
+    return m_x.size() * m_y.size() + m_y.size() * m_z.size() + m_z.size() * m_x.size();
 }
