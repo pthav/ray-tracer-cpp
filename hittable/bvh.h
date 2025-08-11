@@ -23,6 +23,12 @@ struct work
     size_t m_end{};
 };
 
+struct bin
+{
+    AABB m_aabb{AABB::empty};
+    int m_count{};
+};
+
 class BVH : public Hittable
 {
 public:
@@ -63,6 +69,6 @@ private:
     static bool boxZCompare(const std::shared_ptr<Hittable> &a, const std::shared_ptr<Hittable> &b);
 };
 
-inline int BVH::m_maxLeafNodes{4};
+inline int BVH::m_maxLeafNodes{2};
 
 #endif

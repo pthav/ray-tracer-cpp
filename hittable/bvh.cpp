@@ -26,16 +26,17 @@ BVH::BVH(HittableList list)
         size_t span{w.m_end - w.m_start};
         assert(span > 0 && "degenerate span");
         int axis{};
-        double splitPos {};
-        auto splitCost {findSplit(aabb, w.m_start, w.m_end, axis, splitPos)};
+        double splitPos{};
+        auto splitCost{findSplit(aabb, w.m_start, w.m_end, axis, splitPos)};
         if (span <= m_maxLeafNodes || splitCost > (aabb.surfaceArea() * static_cast<int>(span)))
         {
             m_nodes[w.m_node] = makeLeaf(aabb, w.m_start, static_cast<int>(span));
-        }else{
+        } else
+        {
             size_t left{allocateNode()};
             size_t right{allocateNode()};
             m_nodes[w.m_node] = makeInternal(aabb, left, right);
-            auto mid {partition(w.m_start, w.m_end, axis, splitPos)};
+            auto mid{partition(w.m_start, w.m_end, axis, splitPos)};
             assert(w.m_start < mid && mid < w.m_end && "degenerate partition");
             m_nodes[w.m_node] = makeInternal(aabb, left, right);
             queue.push(work{left, w.m_start, mid});
@@ -97,43 +98,78 @@ double BVH::evaluateSplit(size_t left, size_t right, int axis, double splitPos) 
         {
             ++leftCount;
             leftBox = AABB(leftBox, m_objects[i]->boundingBox());
-        }else
+        } else
         {
             ++rightCount;
             rightBox = AABB(rightBox, m_objects[i]->boundingBox());
         }
     }
 
-    auto cost {leftCount * leftBox.surfaceArea() + rightCount * rightBox.surfaceArea()};
+    auto cost{leftCount * leftBox.surfaceArea() + rightCount * rightBox.surfaceArea()};
     return (cost > 0) ? cost : std::numeric_limits<double>::infinity();
 }
 
-double BVH::findSplit(const AABB& subtree, size_t left, size_t right, int &axis, double &splitPos) const
+double BVH::findSplit(const AABB &subtree, size_t left, size_t right, int &axis, double &splitPos) const
 {
-    // auto numBins{4};
-    double bestSplit{};
+    auto BINS{8};
     double bestCost{std::numeric_limits<double>::infinity()};
 
     for (auto a{0}; a < 3; ++a)
     {
+        auto boundsMax{subtree.axisInterval(a).m_max};
+        auto boundsMin{subtree.axisInterval(a).m_min};
+        if (boundsMax == boundsMin)
+        {
+            continue;
+        }
+
+        bin bins[BINS];
+        auto scale{BINS / (boundsMax - boundsMin)};
         for (size_t i{left}; i < right; ++i)
         {
-            auto candidate {m_objects[i]->boundingBox().centroid(a)};
-            if (auto cost {evaluateSplit(left,right,a,candidate)}; cost < bestCost)
+            auto binIdx{std::min(BINS - 1, static_cast<int>((m_objects[i]->boundingBox().centroid(a) - boundsMin) * scale))};
+            bins[binIdx].m_aabb = AABB(bins[binIdx].m_aabb, m_objects[i]->boundingBox());
+            ++bins[binIdx].m_count;
+        }
+
+        double leftArea[BINS - 1];
+        double rightArea[BINS - 1];
+        int leftCount[BINS - 1];
+        int rightCount[BINS - 1];
+        AABB leftBox{AABB::empty};
+        AABB rightBox{AABB::empty};
+        int leftSum{0};
+        int rightSum{0};
+        for (int i = 0; i < BINS - 1; i++)
+        {
+            leftSum += bins[i].m_count;
+            leftCount[i] = leftSum;
+            leftBox = AABB(leftBox, bins[i].m_aabb);
+            leftArea[i] = leftBox.surfaceArea();
+            rightSum += bins[BINS - 1 - i].m_count;
+            rightCount[BINS - 2 - i] = rightSum;
+            rightBox = AABB(rightBox, bins[BINS - 1 - i].m_aabb);
+            rightArea[BINS - 2 - i] = rightBox.surfaceArea();
+        }
+
+        scale = (boundsMax - boundsMin) / BINS;
+        for (int i = 0; i < BINS - 1; i++)
+        {
+            double cost{leftCount[i] * leftArea[i] + rightCount[i] * rightArea[i]};
+            if (cost > 0 && cost < bestCost)
             {
                 axis = a;
-                bestSplit = candidate;
+                splitPos = boundsMin + scale * (i + 1);
                 bestCost = cost;
             }
         }
     }
-    splitPos = bestSplit;
     return bestCost;
 }
 
 size_t BVH::partition(size_t start, size_t end, int axis, double splitPos)
 {
-    size_t first {start};
+    size_t first{start};
     while (first < end)
     {
         if (m_objects[first]->boundingBox().centroid(axis) >= splitPos)
@@ -148,7 +184,7 @@ size_t BVH::partition(size_t start, size_t end, int axis, double splitPos)
         return first;
     }
 
-    for (auto i {first+1}; i < end; ++i)
+    for (auto i{first + 1}; i < end; ++i)
     {
         if (m_objects[i]->boundingBox().centroid(axis) < splitPos)
         {
